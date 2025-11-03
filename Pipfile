@@ -5,17 +5,21 @@ name = "pypi"
 
 [packages]
 click = "==7.1.2"
+flask = "==1.1.2"
 itsdangerous = "==1.1.0"
 jinja2 = "==2.11.2"
 markupsafe = "==1.1.1"
 werkzeug = "==1.0.1"
-flask = "*"
+
+[dev-packages]
 pytest = "*"
 selenium = "*"
 locust = "*"
 coverage = "*"
-
-[dev-packages]
+black = "*"
+isort = "*"
+flake8 = "*"
+pre-commit = "*"
 
 [requires]
-python_version = "3.13"
+python_version = "3.12"
