@@ -1,7 +1,132 @@
-bin
-include
-lib
+# ========================
+# Perso
+# ========================
+/NOTES
+
+
+# ========================
+# 🐍 Python
+# ========================
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
 .Python
-tests/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# SQLite, logs et outputs temporaires
+*.log
+*.out
+*.tmp
+*.bak
+*.swp
+
+# ========================
+# 🧪 Tests & QA
+# ========================
+reports/
+test-results/
+coverage-report/
 .envrc
-__pycache__
+.env.test
+pytestdebug.log
+
+# ========================
+# 🧰 Environnements
+# ========================
+# Environnements virtuels
+.env
+.venv
+venv/
+ENV/
+env/
+env.bak/
+venv.bak/
+
+# Pipenv
+Pipfile.lock
+# (si tu veux le partager, enlève cette ligne)
+
+# Poetry
+poetry.lock
+
+# ========================
+# ⚙️ IDE & éditeurs
+# ========================
+# VSCode
+.vscode/
+.history/
+.code-workspace
+
+# PyCharm
+.idea/
+
+# ========================
+# 💻 OS spécifiques
+# ========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# ========================
+# 📁 Fichiers projet spécifiques
+# ========================
+# Dossiers de cache
+.gudlft_cache/
+# Dossiers générés par tests ou scripts
+temp/
+tmp/
+logs/
+uploads/
+
+# ========================
+# 🧱 Autres outils
+# ========================
+# pre-commit
+.pre-commit-config.yaml
+.pre-commit-hooks.yaml
+.pre-commit-cache/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Locust load test results
+locustfile.py
+results/
