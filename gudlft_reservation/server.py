@@ -1,16 +1,21 @@
 import json
+import os
 
 from flask import Flask, flash, redirect, render_template, request, url_for
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 def loadClubs():
-    with open("clubs.json") as c:
+    path = os.path.join(BASE_DIR, "clubs.json")
+    with open(path) as c:
         listOfClubs = json.load(c)["clubs"]
         return listOfClubs
 
 
 def loadCompetitions():
-    with open("competitions.json") as comps:
+    path = os.path.join(BASE_DIR, "competitions.json")
+    with open(path) as comps:
         listOfCompetitions = json.load(comps)["competitions"]
         return listOfCompetitions
 
@@ -29,7 +34,13 @@ def index():
 
 @app.route("/showSummary", methods=["POST"])
 def showSummary():
-    club = [club for club in clubs if club["email"] == request.form["email"]][0]
+    email = request.form["email"]
+    club = next((club for club in clubs if club["email"] == email), None)
+
+    if club is None:
+        flash("Erreur : email inconnu. Veuillez réessayer.")
+        return render_template("index.html"), 200
+
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
