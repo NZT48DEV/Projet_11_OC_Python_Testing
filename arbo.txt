@@ -1,0 +1,27 @@
+|__ .DS_Store
+|__ .flake8
+|__ .gitignore
+|__ .pre-commit-config.yaml
+|__ arbo.txt
+|__ gudlft_reservation/
+    |__ __init__.py
+    |__ clubs.json
+    |__ competitions.json
+    |__ README.md
+    |__ server.py
+    |__ templates/
+        |__ booking.html
+        |__ index.html
+        |__ welcome.html
+    |__ tests/
+        |__ functional/
+            |__ test_invalid_email_functional.py
+        |__ integration/
+            |__ test_show_summary.py
+        |__ unit/
+            |__ test_club_lookup.py
+|__ Pipfile
+|__ Pipfile.lock
+|__ pyproject.toml
+|__ pytest.ini
+|__ requirements.txt
