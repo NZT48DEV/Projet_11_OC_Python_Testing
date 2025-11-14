@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_book_valid(client):
     response = client.get("/book/Spring Festival/Simply Lift")
 
@@ -14,10 +11,12 @@ def test_book_valid(client):
 
 
 def test_book_invalid_club(client):
-    with pytest.raises(IndexError):
-        client.get("/book/Spring Festival/ClubInexistant")
+    response = client.get("/book/Spring Festival/ClubInexistant")
+    assert response.status_code == 200
+    assert "something went wrong" in response.get_data(as_text=True).lower()
 
 
 def test_book_invalid_competition(client):
-    with pytest.raises(IndexError):
-        client.get("/book/UnknownCompetition/Simply Lift")
+    response = client.get("/book/UnknownCompetition/Simply Lift")
+    assert response.status_code == 200
+    assert "something went wrong" in response.get_data(as_text=True).lower()

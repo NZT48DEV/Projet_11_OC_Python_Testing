@@ -1,28 +1,29 @@
-def test_full_booking_flow(browser):
-    # 1. Page d'accueil
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
+
+
+def test_full_booking_flow(browser, wait_for_text_in_page):
     browser.get("http://127.0.0.1:5000/")
 
-    # 2. Login
-    browser.find_element("name", "email").send_keys("john@simplylift.co")
-    browser.find_element("tag name", "button").click()
+    browser.find_element(By.NAME, "email").send_keys("john@simplylift.co")
+    browser.find_element(By.TAG_NAME, "button").click()
 
-    page = browser.page_source.lower()
-    assert "welcome" in page
+    wait_for_text_in_page(browser, "welcome, john@simplylift.co")
 
-    # 3. Cliquer sur le lien Book Places (TRÈS IMPORTANT)
-    link = browser.find_element("link text", "Book Places")
+    link = WebDriverWait(browser, 3).until(
+        EC.presence_of_element_located((By.LINK_TEXT, "Book Places"))
+    )
     link.click()
 
-    # Maintenant on est sur booking.html
-    page = browser.page_source.lower()
-    assert "how many places?" in page
-    assert '<form action="/purchaseplaces"' in page
+    wait_for_text_in_page(browser, "how many places?")
 
-    # 4. Réserver une place
-    browser.find_element("name", "places").send_keys("1")
-    browser.find_element("tag name", "button").click()
+    places_input = browser.find_element(By.NAME, "places")
+    places_input.clear()
+    places_input.send_keys("1")
 
-    page = browser.page_source.lower()
+    button = browser.find_element(By.TAG_NAME, "button")
+    ActionChains(browser).move_to_element(button).click(button).perform()
 
-    # 5. Retour welcome avec message succès
-    assert "great-booking complete!" in page
+    wait_for_text_in_page(browser, "great-booking complete!")
