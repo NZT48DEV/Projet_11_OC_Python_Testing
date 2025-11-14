@@ -9,15 +9,13 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 def loadClubs():
     path = os.path.join(BASE_DIR, "clubs.json")
     with open(path) as c:
-        listOfClubs = json.load(c)["clubs"]
-        return listOfClubs
+        return json.load(c)["clubs"]
 
 
 def loadCompetitions():
     path = os.path.join(BASE_DIR, "competitions.json")
     with open(path) as comps:
-        listOfCompetitions = json.load(comps)["competitions"]
-        return listOfCompetitions
+        return json.load(comps)["competitions"]
 
 
 app = Flask(__name__)
@@ -32,46 +30,67 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/showSummary", methods=["POST"])
+@app.route("/showSummary", methods=["GET", "POST"])
 def showSummary():
-    email = request.form["email"]
-    club = next((club for club in clubs if club["email"] == email), None)
+    # --- Détection email POST (login normal) ---
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        club = next((c for c in clubs if c["email"].strip().lower() == email), None)
+        if club is None:
+            flash("Erreur : email inconnu. Veuillez réessayer.")
+            return render_template("index.html"), 200
 
-    if club is None:
-        flash("Erreur : email inconnu. Veuillez réessayer.")
-        return render_template("index.html"), 200
+    # --- Détection club GET (retour après /purchasePlaces) ---
+    else:
+        club_name = request.args.get("club", "").strip().lower()
+        club = next((c for c in clubs if c["name"].strip().lower() == club_name), None)
+        if club is None:
+            flash("Erreur : club inconnu.")
+            return render_template("index.html"), 200
 
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
 @app.route("/book/<competition>/<club>")
 def book(competition, club):
-    foundClub = [c for c in clubs if c["name"] == club][0]
-    foundCompetition = [c for c in competitions if c["name"] == competition][0]
-    if foundClub and foundCompetition:
-        return render_template(
-            "booking.html", club=foundClub, competition=foundCompetition
+    foundClub = next((c for c in clubs if c["name"] == club), None)
+    foundCompetition = next((c for c in competitions if c["name"] == competition), None)
+
+    if not foundClub or not foundCompetition:
+        flash("Something went wrong")
+        return (
+            render_template(
+                "welcome.html",
+                club=foundClub or {"name": "", "email": "", "points": 0},
+                competitions=competitions,
+            ),
+            200,
         )
-    else:
-        flash("Something went wrong-please try again")
-        return render_template("welcome.html", club=club, competitions=competitions)
+
+    return render_template("booking.html", club=foundClub, competition=foundCompetition)
 
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
-    competition = [c for c in competitions if c["name"] == request.form["competition"]][
-        0
-    ]
-    club = [c for c in clubs if c["name"] == request.form["club"]][0]
+    # Récupération des données
+    competition = next(
+        c for c in competitions if c["name"] == request.form["competition"]
+    )
+    club = next(c for c in clubs if c["name"] == request.form["club"])
+
     placesRequired = int(request.form["places"])
     competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - placesRequired
+
     flash("Great-booking complete!")
+
+    # IMPORTANT : on RENVOIE directement welcome.html (status 200)
     return render_template("welcome.html", club=club, competitions=competitions)
-
-
-# TODO: Add route for points display
 
 
 @app.route("/logout")
 def logout():
     return redirect(url_for("index"))
+
+
+if __name__ == "__main__":  # pragma: no cover
+    app.run(host="127.0.0.1", port=5000, debug=False)

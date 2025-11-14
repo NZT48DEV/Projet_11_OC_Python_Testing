@@ -1,21 +1,16 @@
-def test_login_invalid_email(browser):
+from selenium.webdriver.common.by import By
+
+
+def test_login_invalid_email(browser, wait_for_text_in_page):
     browser.get("http://127.0.0.1:5000/")
 
-    # Email invalide
-    email_input = browser.find_element("name", "email")
-    email_input.send_keys("wrong@email.com")
+    email_input = browser.find_element(By.NAME, "email")
+    email_input.send_keys("user_inexistant@test.com")
 
-    browser.find_element("tag name", "button").click()
+    browser.find_element(By.TAG_NAME, "button").click()
+
+    wait_for_text_in_page(browser, "erreur : email inconnu")
 
     page = browser.page_source.lower()
-
-    # On reste sur index.html (le titre de la page d'accueil est toujours là)
-    assert "welcome to the gudlft registration portal" in page
-
-    # Le formulaire de login est toujours présent
-    assert '<form action="showsummary"' in page
-    assert 'name="email"' in page
-
-    # On NE voit PAS le texte spécifique de la page welcome (page club connecté)
-    assert "points available" not in page
-    assert "logout" not in page
+    assert "please enter your secretary email" in page
+    assert "erreur : email inconnu" in page

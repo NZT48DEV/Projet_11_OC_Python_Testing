@@ -1,9 +1,9 @@
-|__ .DS_Store
 |__ .flake8
 |__ .gitignore
 |__ .pre-commit-config.yaml
 |__ arbo.txt
 |__ gudlft_reservation/
+    |__ .DS_Store
     |__ __init__.py
     |__ clubs.json
     |__ competitions.json
@@ -13,15 +13,26 @@
         |__ booking.html
         |__ index.html
         |__ welcome.html
-    |__ tests/
-        |__ functional/
-            |__ test_invalid_email_functional.py
-        |__ integration/
-            |__ test_show_summary.py
-        |__ unit/
-            |__ test_club_lookup.py
 |__ Pipfile
 |__ Pipfile.lock
 |__ pyproject.toml
 |__ pytest.ini
 |__ requirements.txt
+|__ tests/
+    |__ functional/
+        |__ conftest.py
+        |__ test_booking_page.py
+        |__ test_full_booking_flow.py
+        |__ test_login_invalid_email.py
+        |__ test_login_valid_email.py
+    |__ integration/
+        |__ conftest.py
+        |__ test_book_valid.py
+        |__ test_index_page_loads.py
+        |__ test_logout_redirects.py
+        |__ test_purchase_places_valid.py
+        |__ test_show_summary_invalid_email.py
+    |__ unit/
+        |__ test_club_lookup.py
+        |__ test_competitions_lookup.py
+        |__ test_loading_functions.py
