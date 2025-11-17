@@ -15,67 +15,67 @@ Ce dépôt contient l’application **GudLFT Reservation** ainsi que l’ensembl
 
 Dans le cadre du parcours **Développeur d'application Python**, ce projet consiste à :
 
-- Identifier et corriger des bugs (7 issues au total, l’issue 1 est terminée)
+- Identifier et corriger des bugs (7 issues au total)
 - Renforcer l’application avec des tests **unitaires, intégration, fonctionnels et performance**
 - Structurer un pipeline QA complet
 - Préparer le terrain pour traiter les issues suivantes de manière fiable
 
-Ce README décrit le travail effectué pour l’issue 1 et pose les fondations pour les prochaines.
+Ce README décrit les issues corrigées, ainsi que l’infrastructure mise en place pour la suite.
 
 ---
 
-# 🐞 Issue 1 — Crash sur email invalide
+# Issue 1 — Crash sur email invalide (corrigé)
 
 ### ❗ Problème
-
 La route `/showSummary` plantait lorsqu’un utilisateur saisissait un email inconnu.
 
 ### ✔ Correction
-
-- Remplacement du `[0]` par `next(..., None)`
-- Gestion des erreurs propres
-- Message utilisateur avec **flash()**
-- Retour cohérent vers `index.html`
-- Support GET / POST pour `/showSummary`
-- Tests multi-niveaux garantissant l'absence de régression
+- Remplacement du `[0]` par `next(..., None)` pour éviter l’IndexError
+- Gestion propre des erreurs
+- Ajout d’un message utilisateur via `flash()`
+- Support GET/POST pour `/showSummary`
+- Tests robustes sur 3 niveaux (unitaire, intégration, fonctionnel)
 
 ---
 
-# 🧪 Stratégie de Tests (complète)
+# Issue 2 — Empêcher la réservation si le club n’a pas assez de points (corrigé)
 
-Même si seule l’issue 1 a été corrigée, nous avons mis en place **tous les tests** pour sécuriser le code existant et préparer les futures issues.
+### ❗ Problème
+Un club pouvait réserver plus de places que ses points disponibles.
 
-## 1. Tests unitaires
+### ✔ Correction
+- Ajout de la fonction **`can_book()`**  
+- Validation renforcée dans `/purchasePlaces`
+- Message d’erreur propre en cas de points insuffisants
+- Mise à jour des tests unitaires, intégration et fonctionnels
+- Ajout d’un test Selenium dédié
 
-📁 `tests/unit/`
+Tests maintenant **100 % green**.
 
-- Vérification du chargement JSON
-- Lookup de clubs et compétitions
-- Fonctions utilitaires
+---
 
-## 2. Tests d’intégration
+# 🧪 Stratégie de Tests
 
-📁 `tests/integration/`
+## 🔹 1. Tests unitaires (`tests/unit/`)
+- Chargement JSON
+- Lookups clubs/compétitions
+- Règles métier (`can_book`)
+- Gestion des erreurs
 
-- Routes Flask
-- Gestion d’erreurs
-- Tests complets des réponses HTTP
+## 🔹 2. Tests d’intégration (`tests/integration/`)
+- Vérification complète des routes Flask
+- Cas d’erreurs (email inconnu, club inconnu, points insuffisants)
+- Réservations valides et invalides
 
-## 3. Tests fonctionnels (Selenium)
-
-📁 `tests/functional/`
-
-- Simulation d’un utilisateur réel
-- Navigation et réservation
+## 🔹 3. Tests fonctionnels Selenium (`tests/functional/`)
+- Scénarios utilisateurs réels
+- Navigation, réservation, erreurs
 - Attente dynamique (`WebDriverWait`)
-- Fonction utilitaire mutualisée : `wait_for_text_in_page()`
+- Fonction commune : `wait_for_text_in_page`
 
-## 4. Tests de performance (Locust)
-
-📁 `tests/performance/`
-
-- Simulation de charge
-- Script dédié lançant automatiquement un serveur pour éviter tout conflit
+## 🔹 4. Tests de performance Locust (`tests/performance/`)
+- Scénarios simulant de nombreuses connexions
+- Serveur isolé lancé automatiquement
 
 ---
 
@@ -102,6 +102,8 @@ Pipfile
 Pipfile.lock
 README.md
 ```
+
+---
 
 ### 🔎 Architecture des tests
 
@@ -134,80 +136,70 @@ tests/
 
 # ⚙️ Installation & Lancement
 
-## 1️⃣ Installation du projet
-
-Le projet utilise **pipenv** :
-
+## 1️⃣ Installer l’environnement
 ```bash
 pip install pipenv
 pipenv install
 ```
 
----
-
 ## 2️⃣ Activer l’environnement
-
 ```bash
 pipenv shell
 ```
 
----
-
 ## 3️⃣ Lancer le serveur
-
 ```bash
 pipenv run python -m gudlft_reservation.server
 ```
 
-Serveur accessible sur :
-
+Serveur local :  
 👉 http://127.0.0.1:5000
 
 ---
 
-# 🧪 Exécuter les tests
+# 🧪 Lancer les tests
 
-### Tous les tests :
-
+### Tous les tests
 ```bash
 pytest
 ```
 
-### Tests fonctionnels Selenium :
-
+### Fonctionnels (Selenium)
 ```bash
 pytest tests/functional -s
 ```
 
-### Tests de performance :
-
+### Tests performance
 ```bash
 python tests/performance/run_performance.py
 ```
 
----
-
-# 📊 Couverture du code
-
+### Couverture
 ```bash
 pytest --cov=gudlft_reservation --cov-report=html
 ```
 
-Couverture actuelle : **100 %**  
-(`app.run()` volontairement exclu)
+👉 Couverture actuelle : **100 %**
 
 ---
 
-# 🚀 Pour la suite : issues restantes
+# 🚀 Pour la suite : état d’avancement des issues
 
-Seule **l’issue 1** est corrigée, mais **toute l’infrastructure de test est prête** pour traiter les 6 autres :
+Le projet comporte **7 issues officielles** (source : dépôt OpenClassrooms).  
+Grâce à toute l’infrastructure de test mise en place, la progression sera fluide et sécurisée.
 
-- Toutes les routes sont testées
-- Le navigateur headless est stable
-- Les helpers Selenium sont centralisés
-- L’architecture de test est complète
-- Le serveur est isolé pour performance & functional testing
+## ✅ Issues terminées
+- ✔ **Issue 1 — ERROR: Entering an unknown email crashes the app**  
+  *(corrigée et entièrement testée : unitaires, intégration, fonctionnels)*  
+- ✔ **Issue 2 — BUG: Clubs should not be able to use more than their points allowed**  
+  *(validation, refactor, tests complets et couverture totale)*
 
+## ⏳ Issues restantes à traiter
+- ☐ **Issue 3 — BUG: Clubs should not be able to book more than the competition places available**  
+- ☐ **Issue 4 — BUG: Clubs shouldn't be able to book more than 12 places per competition**  
+- ☐ **Issue 5 — BUG: Booking places in past competitions**  
+- ☐ **Issue 6 — BUG: Point updates are not reflected**  
+- ☐ **Issue 7 — FEATURE: Implement Points Display Board**
 
 ---
 
