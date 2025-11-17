@@ -18,23 +18,52 @@ def loadCompetitions():
         return json.load(comps)["competitions"]
 
 
-def can_book(club: dict, places_requested: int) -> bool:
+def can_book(club: dict, competition: dict, places_requested: int):
     """
-    Retourne True si le club peut réserver `places_requested` places.
-    Gère club None, club invalide, points invalides, places invalides, etc.
+    Returns (True, "") if booking is allowed.
+    Otherwise (False, "error message").
+    Handles:
+      - invalid club
+      - invalid competition
+      - insufficient points
+      - insufficient competition places
     """
     try:
-        # Club doit être un dictionnaire valide
         if not isinstance(club, dict):
-            return False
+            return False, "Invalid club data."
 
-        available_points = int(club.get("points", 0))
+        if not isinstance(competition, dict):
+            return False, "Invalid competition data."
+
         requested = int(places_requested)
+        available_points = int(club.get("points", 0))
+        competition_places = int(competition.get("numberOfPlaces", 0))
 
-        return available_points >= requested
+        if requested <= 0:
+            return False, "You must book at least one place."
+
+        if requested > available_points:
+            return (
+                False,
+                (
+                    "Not enough points to book these places. "
+                    f"You requested {requested} places but only {available_points} points are available."
+                ),
+            )
+
+        if requested > competition_places:
+            return (
+                False,
+                (
+                    "Not enough places available for this competition. "
+                    f"You requested {requested} places but only {competition_places} places remain."
+                ),
+            )
+
+        return True, ""
 
     except (TypeError, ValueError):
-        return False
+        return False, "Invalid number of places."
 
 
 app = Flask(__name__)
@@ -51,20 +80,22 @@ def index():
 
 @app.route("/showSummary", methods=["GET", "POST"])
 def showSummary():
-    # --- Détection email POST (login normal) ---
+    # POST: login with email
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
         club = next((c for c in clubs if c["email"].strip().lower() == email), None)
+
         if club is None:
-            flash("Erreur : email inconnu. Veuillez réessayer.")
+            flash("Unknown email. Please try again.")
             return render_template("index.html"), 200
 
-    # --- Détection club GET (retour après /purchasePlaces) ---
+    # GET: retrieve club by name
     else:
         club_name = request.args.get("club", "").strip().lower()
         club = next((c for c in clubs if c["name"].strip().lower() == club_name), None)
+
         if club is None:
-            flash("Erreur : club inconnu.")
+            flash("Unknown club.")
             return render_template("index.html"), 200
 
     return render_template("welcome.html", club=club, competitions=competitions)
@@ -76,7 +107,7 @@ def book(competition, club):
     foundCompetition = next((c for c in competitions if c["name"] == competition), None)
 
     if not foundClub or not foundCompetition:
-        flash("Something went wrong")
+        flash("Unknown club or competition.")
         return (
             render_template(
                 "welcome.html",
@@ -91,43 +122,44 @@ def book(competition, club):
 
 @app.route("/purchasePlaces", methods=["POST"])
 def purchasePlaces():
-    # Récupération des noms envoyés par le formulaire
     competition_name = request.form["competition"]
     club_name = request.form["club"]
     places_raw = request.form.get("places", "0")
 
-    # Recherche du club et de la compétition
-    competition = next(c for c in competitions if c["name"] == competition_name)
-    club = next(c for c in clubs if c["name"] == club_name)
+    # Safe lookup
+    competition = next((c for c in competitions if c["name"] == competition_name), None)
+    club = next((c for c in clubs if c["name"] == club_name), None)
 
-    # Utilisation de la règle métier centralisée
-    if not can_book(club, places_raw):
-        flash("You do not have enough points to book these places.")
+    if club is None:
+        flash("Unknown club.")
+        return render_template("index.html"), 200
+
+    if competition is None:
+        flash("Unknown competition.")
         return (
             render_template("welcome.html", club=club, competitions=competitions),
             200,
         )
 
-    # À partir d’ici, on sait que la réservation est valide
+    # Business logic
+    is_allowed, error_message = can_book(club, competition, places_raw)
+
+    if not is_allowed:
+        flash(error_message)
+        return (
+            render_template("welcome.html", club=club, competitions=competitions),
+            200,
+        )
+
+    # Apply booking
     places_required = int(places_raw)
-    club_points = int(club.get("points", 0))
-
-    # Mise à jour des points du club
-    club["points"] = club_points - places_required
-
-    # Mise à jour des places de la compétition
+    club["points"] = int(club["points"]) - places_required
     competition["numberOfPlaces"] = int(competition["numberOfPlaces"]) - places_required
 
     flash("Great-booking complete!")
-
-    # IMPORTANT : on renvoie directement welcome.html (status 200)
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
 @app.route("/logout")
 def logout():
     return redirect(url_for("index"))
-
-
-if __name__ == "__main__":  # pragma: no cover
-    app.run(host="127.0.0.1", port=5000, debug=False)

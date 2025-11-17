@@ -1,22 +1,26 @@
-def test_book_valid(client):
-    response = client.get("/book/Spring Festival/Simply Lift")
+def test_book_valid(client, sample_data):
+    # Accès à la page booking
+    response = client.get("/book/Comp A/Test Club")
 
     assert response.status_code == 200
     page = response.get_data(as_text=True).lower()
 
-    # booking.html contient "booking"
     assert "booking" in page
-    assert "spring festival" in page
-    assert "simply lift" in page
+    assert "comp a" in page
+    assert "test club" in page
 
 
-def test_book_invalid_club(client):
-    response = client.get("/book/Spring Festival/ClubInexistant")
+def test_book_invalid_club(client, sample_data):
+    response = client.get("/book/Comp A/ClubInexistant")
+    page = response.get_data(as_text=True).lower()
+
     assert response.status_code == 200
-    assert "something went wrong" in response.get_data(as_text=True).lower()
+    assert "unknown club or competition" in page
 
 
-def test_book_invalid_competition(client):
-    response = client.get("/book/UnknownCompetition/Simply Lift")
+def test_book_invalid_competition(client, sample_data):
+    response = client.get("/book/UnknownCompetition/Test Club")
+    page = response.get_data(as_text=True).lower()
+
     assert response.status_code == 200
-    assert "something went wrong" in response.get_data(as_text=True).lower()
+    assert "unknown club or competition" in page
