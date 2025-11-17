@@ -82,6 +82,27 @@ L’application permettait à un club de réserver un nombre de places supérieu
 
 ---
 
+# Issue 4 — Limit booking to a maximum of 12 places (corrigé)
+
+### ❗ Problème  
+Un club pouvait réserver **plus de 12 places**, ce qui est interdit par la règle métier officielle du projet.
+
+### ✔ Correction  
+- Ajout de la constante globale `MAX_PLACES_REQUESTED = 12`
+- Ajout d’un contrôle dans `can_book()` pour refuser toute réservation > 12
+- Mise à jour de `/purchasePlaces` (affichage message + comportement cohérent)
+
+### 🧪 Tests mis à jour
+- **Unitaires** : nouveaux tests dédiés à la limite des 12 places
+- **Intégration** : test vérifiant que l’API refuse correctement la réservation
+- **Fonctionnels (Selenium)** :
+  - Scénario complet avec helpers (login → booking → erreur affichée)
+  - Vérification que les points/places restent inchangés
+  - Vérification du message utilisateur exact
+
+➡️ Résultat : **plus aucun contournement possible**, règle des 12 places totalement respectée.
+
+---
 
 # 🧪 Stratégie de Tests
 
@@ -100,115 +121,11 @@ L’application permettait à un club de réserver un nombre de places supérieu
 - Scénarios utilisateurs réels
 - Navigation, réservation, erreurs
 - Attente dynamique (`WebDriverWait`)
-- Fonction commune : `wait_for_text_in_page`
+- Helpers pour automatiser le login & booking
 
 ## 🔹 4. Tests de performance Locust (`tests/performance/`)
 - Scénarios simulant de nombreuses connexions
 - Serveur isolé lancé automatiquement
-
----
-
-# 🏗 Architecture du projet
-
-```
-gudlft_reservation/
-│── server.py
-│── clubs.json
-│── competitions.json
-│── templates/
-│     ├── index.html
-│     ├── welcome.html
-│     └── booking.html
-│
-tests/
-│── unit/
-│── integration/
-│── functional/
-│── performance/
-│── conftest.py
-│
-Pipfile
-Pipfile.lock
-README.md
-```
-
----
-
-### 🔎 Architecture des tests
-
-```
-tests/
-├── unit
-│    ├── test_club_lookup.py
-│    ├── test_competitions_lookup.py
-│    └── test_loading_functions.py
-│
-├── integration
-│    ├── test_show_summary_invalid_email.py
-│    ├── test_show_summary_invalid_club.py
-│    ├── test_purchase_places_valid.py
-│    ├── test_book_valid.py
-│    └── test_logout_redirects.py
-│
-├── functional
-│    ├── test_login_valid_email.py
-│    ├── test_login_invalid_email.py
-│    ├── test_booking_page.py
-│    └── test_full_booking_flow.py
-│
-├── performance
-│    ├── locustfile.py
-│    └── run_performance.py
-```
-
----
-
-# ⚙️ Installation & Lancement
-
-## 1️⃣ Installer l’environnement
-```bash
-pip install pipenv
-pipenv install
-```
-
-## 2️⃣ Activer l’environnement
-```bash
-pipenv shell
-```
-
-## 3️⃣ Lancer le serveur
-```bash
-pipenv run python -m gudlft_reservation.server
-```
-
-Serveur local :  
-👉 http://127.0.0.1:5000
-
----
-
-# 🧪 Lancer les tests
-
-### Tous les tests
-```bash
-pytest
-```
-
-### Fonctionnels (Selenium)
-```bash
-pytest tests/functional -s
-```
-
-### Tests performance
-```bash
-python tests/performance/run_performance.py
-```
-
-### Couverture
-```bash
-pytest --cov=gudlft_reservation --cov-report=html
-```
-
-👉 Couverture actuelle : **100 %**
 
 ---
 
@@ -218,15 +135,12 @@ Le projet comporte **7 issues officielles** (source : dépôt OpenClassrooms).
 Grâce à toute l’infrastructure de test mise en place, la progression sera fluide et sécurisée.
 
 ## ✅ Issues terminées
-- ✔ **Issue 1 — ERROR: Entering an unknown email crashes the app**  
-  *(corrigée et entièrement testée : unitaires, intégration, fonctionnels)*  
-- ✔ **Issue 2 — BUG: Clubs should not be able to use more than their points allowed**  
-  *(validation, refactor, tests complets et couverture totale)*
-- ✔ **Issue 3 — BUG: Clubs should not be able to book more than the competition places available**  \
-  *(validation règles métier + tests unitaires / intégration / fonctionnels)*  
+- ✔ **Issue 1 — ERROR: Entering an unknown email crashes the app**
+- ✔ **Issue 2 — BUG: Clubs should not be able to use more than their points allowed**
+- ✔ **Issue 3 — BUG: Clubs should not be able to book more than the competition places available**
+- ✔ **Issue 4 — BUG: Clubs shouldn't be able to book more than 12 places per competition**
 
 ## ⏳ Issues restantes à traiter
-- ☐ **Issue 4 — BUG: Clubs shouldn't be able to book more than 12 places per competition**  
 - ☐ **Issue 5 — BUG: Booking places in past competitions**  
 - ☐ **Issue 6 — BUG: Point updates are not reflected**  
 - ☐ **Issue 7 — FEATURE: Implement Points Display Board**

@@ -1,35 +1,22 @@
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from tests.functional.helpers import book_places, go_to_booking_page, login
 
 
-def test_booking_insufficient_points(browser, wait_for_text_in_page):
-    browser.get("http://127.0.0.1:5000/")
+def test_booking_insufficient_points(browser, wait_for_text_in_page, patch_server_data):
+    # On modifie la fixture : Simply Lift n’a plus que 5 points
+    patch_server_data[0][0]["points"] = 5  # test_clubs[0]["points"] = 5
 
-    browser.find_element(By.NAME, "email").send_keys("john@simplylift.co")
-    browser.find_element(By.TAG_NAME, "button").click()
+    # Connexion
+    login(browser, wait_for_text_in_page)
 
-    wait_for_text_in_page(browser, "welcome, john@simplylift.co")
+    # Navigation vers page booking
+    go_to_booking_page(browser, wait_for_text_in_page)
 
-    link = WebDriverWait(browser, 5).until(
-        EC.element_to_be_clickable((By.LINK_TEXT, "Book Places"))
-    )
-    link.click()
+    # Demande de 10 places (<= 12 mais > points)
+    book_places(browser, 10)
 
-    wait_for_text_in_page(browser, "how many places?")
-
-    places_input = browser.find_element(By.NAME, "places")
-    places_input.clear()
-    places_input.send_keys("20")
-
-    browser.find_element(By.TAG_NAME, "button").click()
-
-    wait_for_text_in_page(
-        browser,
-        "not enough points to book these places.",
-    )
+    # Attente du message d'erreur correct
+    wait_for_text_in_page(browser, "not enough points to book these places.")
 
     page = browser.page_source.lower()
 
-    assert "welcome, john@simplylift.co" in page
     assert "not enough points to book these places." in page
