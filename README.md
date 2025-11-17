@@ -54,6 +54,35 @@ Tests maintenant **100 % green**.
 
 ---
 
+# Issue 3 — Clubs should not be able to book more than the competition places available (corrigé)
+
+### ❗ Problème  
+L’application permettait à un club de réserver un nombre de places supérieur au nombre réellement disponible dans la compétition.
+
+### ✔ Correction  
+- Ajout d’une validation stricte dans la fonction métier **`can_book()`**
+- Vérification que les `numberOfPlaces` sont suffisants avant toute réservation  
+- Uniformisation des messages d’erreur
+- Gestion complète des cas invalides :
+  - compétition inexistante  
+  - club inexistant  
+  - valeur non numérique  
+  - valeur négative ou nulle  
+- Mise à jour de la route `/purchasePlaces` pour refuser toute réservation invalide  
+
+### 🧪 Tests mis à jour
+- **Unitaires :** couverture à 100% de la fonction `can_book`
+- **Intégration :** tests couvrant les cas insuffisants, valeurs invalides, edge cases
+- **Fonctionnels (Selenium) :**
+  - scénario complet de sur-réservation
+  - vérification du message utilisateur
+  - vérification que les points/places restent inchangés
+
+➡️ Résultat : **comportement complètement corrigé**, aucun club ne peut dépasser les places restantes.
+
+---
+
+
 # 🧪 Stratégie de Tests
 
 ## 🔹 1. Tests unitaires (`tests/unit/`)
@@ -193,9 +222,10 @@ Grâce à toute l’infrastructure de test mise en place, la progression sera fl
   *(corrigée et entièrement testée : unitaires, intégration, fonctionnels)*  
 - ✔ **Issue 2 — BUG: Clubs should not be able to use more than their points allowed**  
   *(validation, refactor, tests complets et couverture totale)*
+- ✔ **Issue 3 — BUG: Clubs should not be able to book more than the competition places available**  \
+  *(validation règles métier + tests unitaires / intégration / fonctionnels)*  
 
 ## ⏳ Issues restantes à traiter
-- ☐ **Issue 3 — BUG: Clubs should not be able to book more than the competition places available**  
 - ☐ **Issue 4 — BUG: Clubs shouldn't be able to book more than 12 places per competition**  
 - ☐ **Issue 5 — BUG: Booking places in past competitions**  
 - ☐ **Issue 6 — BUG: Point updates are not reflected**  

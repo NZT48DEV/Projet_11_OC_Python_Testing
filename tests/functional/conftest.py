@@ -9,13 +9,45 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from werkzeug.serving import make_server
 
+# Import serveur + app Flask
 import gudlft_reservation.server as app_server
-from gudlft_reservation.server import app, loadClubs, loadCompetitions
+from gudlft_reservation.server import app  # <- Import manquant ajouté ici
+
+# -------------------------------------------------------------------
+#  Monkeypatch global pour les tests fonctionnels
+# -------------------------------------------------------------------
+
+
+@pytest.fixture
+def patch_server_data(monkeypatch):
+    """
+    Patch the global Flask server data BEFORE the live server starts.
+    Ensures that functional tests always work with controlled fixtures.
+    """
+    test_clubs = [
+        {"name": "Simply Lift", "email": "john@simplylift.co", "points": 13},
+        {"name": "Iron Temple", "email": "admin@iron.com", "points": 4},
+    ]
+
+    test_competitions = [
+        {"name": "Spring Festival", "date": "2025-12-31", "numberOfPlaces": 25},
+        {"name": "Fall Classic", "date": "2025-11-20", "numberOfPlaces": 12},
+    ]
+
+    monkeypatch.setattr(app_server, "clubs", test_clubs)
+    monkeypatch.setattr(app_server, "competitions", test_competitions)
+
+    return test_clubs, test_competitions
+
+
+# -------------------------------------------------------------------
+#  Helper Selenium
+# -------------------------------------------------------------------
 
 
 @pytest.fixture
 def wait_for_text_in_page():
-    """Retourne une fonction utilitaire utilisable dans tous les tests."""
+    """Return a helper function used by all functional tests."""
 
     def _wait(driver, text, timeout=10):
         expected = text.lower()
@@ -26,20 +58,23 @@ def wait_for_text_in_page():
     return _wait
 
 
-@pytest.fixture(scope="function")
-def live_server():
-    """Lance un serveur Flask réel sur 127.0.0.1:5000 pour chaque test fonctionnel."""
+# -------------------------------------------------------------------
+#  Serveur Flask réel pour tests E2E
+# -------------------------------------------------------------------
 
-    # 🔁 Très important : on reset les données globales AVANT de lancer le serveur
-    app_server.clubs = loadClubs()
-    app_server.competitions = loadCompetitions()
+
+@pytest.fixture(scope="function")
+def live_server(patch_server_data):
+    """Start a real Flask server with patched data."""
+
+    # patch_server_data already injected controlled data
 
     server = make_server("127.0.0.1", 5000, app)
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
 
-    # petit délai de sécurité pour être sûr que le serveur écoute
+    # ensure server is listening
     time.sleep(0.2)
 
     try:
@@ -49,9 +84,14 @@ def live_server():
         thread.join()
 
 
+# -------------------------------------------------------------------
+#  Navigateur Chrome pour tests Selenium
+# -------------------------------------------------------------------
+
+
 @pytest.fixture
 def browser(live_server):
-    """Lance Chrome en mode headless et garantit que le serveur est démarré."""
+    """Launch headless Chrome and ensure the server is running."""
 
     options = Options()
     options.add_argument("--headless=new")
