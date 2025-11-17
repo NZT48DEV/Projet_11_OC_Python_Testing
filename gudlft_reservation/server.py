@@ -3,6 +3,8 @@ import os
 
 from flask import Flask, flash, redirect, render_template, request, url_for
 
+from gudlft_reservation.config import MAX_PLACES_REQUESTED
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -41,6 +43,9 @@ def can_book(club: dict, competition: dict, places_requested: int):
 
         if requested <= 0:
             return False, "You must book at least one place."
+
+        if requested > MAX_PLACES_REQUESTED:
+            return False, f"You cannot book more than {MAX_PLACES_REQUESTED} places."
 
         if requested > available_points:
             return (

@@ -1,3 +1,6 @@
+from gudlft_reservation.config import MAX_PLACES_REQUESTED
+
+
 def test_purchase_places_invalid_club(client, sample_data):
     response = client.post(
         "/purchasePlaces",
@@ -137,3 +140,24 @@ def test_purchase_places_exactly_remaining(client, sample_data):
     # Vérifications
     assert clubs[0]["points"] == 7  # 10 - 3
     assert competitions[0]["numberOfPlaces"] == 0
+
+
+def test_cannot_purchase_more_than_max_places_requested(client, sample_data):
+    clubs, competitions = sample_data
+
+    clubs[0]["points"] = 13
+    competitions[0]["numberOfPlaces"] = 13
+    response = client.post(
+        "/purchasePlaces",
+        data={"competition": "Comp A", "club": "Test Club", "places": 13},
+    )
+    page = response.get_data(as_text=True).lower()
+
+    assert response.status_code == 200
+    assert f"you cannot book more than {MAX_PLACES_REQUESTED} places." in page
+
+    # Données NON modifiées
+    assert clubs[0]["points"] == 13
+    assert competitions[0]["numberOfPlaces"] == 13
+
+    assert "welcome" in page

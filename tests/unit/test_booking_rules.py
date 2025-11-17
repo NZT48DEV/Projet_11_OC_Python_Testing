@@ -1,16 +1,17 @@
+from gudlft_reservation.config import MAX_PLACES_REQUESTED
 from gudlft_reservation.server import can_book
 
 # ---------- Helpers ----------
 VALID_CLUB = {
     "name": "Test Club",
     "email": "test@club.com",
-    "points": "10",
+    "points": "14",
 }
 
 VALID_COMPETITION = {
     "name": "Comp A",
     "date": "2025-12-31 10:00:00",
-    "numberOfPlaces": "8",
+    "numberOfPlaces": "13",
 }
 
 
@@ -76,7 +77,7 @@ def test_can_book_invalid_points_valueerror():
 
 # ---------- Tests : règles métier ----------
 def test_can_book_competition_not_enough_places():
-    competition = {"name": "Comp B", "numberOfPlaces": "3", "date": "2025-12-31"}
+    competition = {"name": "Comp B", "date": "2025-12-31", "numberOfPlaces": "3"}
     allowed, msg = can_book(VALID_CLUB, competition, 5)
 
     assert allowed is False
@@ -94,3 +95,10 @@ def test_can_book_requested_zero_or_negative():
     allowed, msg = can_book(VALID_CLUB, VALID_COMPETITION, -2)
     assert allowed is False
     assert msg == "You must book at least one place."
+
+
+def test_can_book_refuses_more_than_max_places_requested():
+    allowed, msg = can_book(VALID_CLUB, VALID_COMPETITION, 13)
+
+    assert allowed is False
+    assert msg == f"You cannot book more than {MAX_PLACES_REQUESTED} places."
