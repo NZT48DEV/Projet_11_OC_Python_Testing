@@ -340,19 +340,19 @@ Couverture actuelle : **100 %**
 
 ## ✅ Issues terminées
 
--   ✔ **Issue 1 --- ERROR: Entering an unknown email crashes the app**
--   ✔ **Issue 2 --- BUG: Clubs should not be able to use more than their
+-   ✔ **Issue 1 — ERROR: Entering an unknown email crashes the app**
+-   ✔ **Issue 2 — BUG: Clubs should not be able to use more than their
     points allowed**
--   ✔ **Issue 3 --- BUG: Clubs should not be able to book more than the
+-   ✔ **Issue 3 — BUG: Clubs should not be able to book more than the
     competition places available**
--   ✔ **Issue 4 --- BUG: Clubs shouldn't be able to book more than 12
+-   ✔ **Issue 4 — BUG: Clubs shouldn't be able to book more than 12
     places per competition**
--   ✔ **Issue 5 --- BUG: Booking places in past competitions**
+-   ✔ **Issue 5 — BUG: Booking places in past competitions**
 
 ## ⏳ Issues restantes à traiter
 
--   [ ] **Issue 6 --- BUG: Point updates are not reflected**
--   [ ] **Issue 7 --- FEATURE: Implement Points Display Board**
+-   [ ] **Issue 6 — BUG: Point updates are not reflected**
+-   [ ] **Issue 7 — FEATURE: Implement Points Display Board**
 
 ------------------------------------------------------------------------
 
