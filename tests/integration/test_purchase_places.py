@@ -1,7 +1,7 @@
-from gudlft_reservation.config import MAX_PLACES_REQUESTED
+import gudlft_reservation.config as config
 
 
-def test_purchase_places_invalid_club(client, sample_data):
+def test_purchase_places_invalid_club(client, base_test_data):
     response = client.post(
         "/purchasePlaces",
         data={"competition": "Comp A", "club": "ClubInexistant", "places": 2},
@@ -13,8 +13,8 @@ def test_purchase_places_invalid_club(client, sample_data):
     assert "please enter your secretary email" in page
 
 
-def test_purchase_places_valid(client, sample_data):
-    clubs, competitions = sample_data  # conftest.py
+def test_purchase_places_valid(client, base_test_data):
+    clubs, competitions = base_test_data  # conftest.py
 
     # On s'assure des valeurs de départ
     clubs[0]["points"] = 10
@@ -37,8 +37,8 @@ def test_purchase_places_valid(client, sample_data):
     assert competitions[0]["numberOfPlaces"] == 3  # 5 - 2
 
 
-def test_purchase_places_insufficient_points(client, sample_data):
-    clubs, competitions = sample_data  # conftest.py
+def test_purchase_places_insufficient_points(client, base_test_data):
+    clubs, competitions = base_test_data  # conftest.py
 
     # On règle les valeurs nécessaires au scénario
     clubs[0]["points"] = 5
@@ -60,8 +60,8 @@ def test_purchase_places_insufficient_points(client, sample_data):
     assert competitions[0]["numberOfPlaces"] == 20
 
 
-def test_purchase_places_not_enough_competition_places(client, sample_data):
-    clubs, competitions = sample_data
+def test_purchase_places_not_enough_competition_places(client, base_test_data):
+    clubs, competitions = base_test_data
 
     clubs[0]["points"] = 50  # assez de points
     competitions[0]["numberOfPlaces"] = 5  # pas assez de places
@@ -81,8 +81,8 @@ def test_purchase_places_not_enough_competition_places(client, sample_data):
     assert clubs[0]["points"] == 50
 
 
-def test_purchase_places_zero_or_negative(client, sample_data):
-    clubs, competitions = sample_data
+def test_purchase_places_zero_or_negative(client, base_test_data):
+    clubs, competitions = base_test_data
 
     response = client.post(
         "/purchasePlaces",
@@ -99,7 +99,7 @@ def test_purchase_places_zero_or_negative(client, sample_data):
     assert "you must book at least one place" in page
 
 
-def test_purchase_places_invalid_number(client, sample_data):
+def test_purchase_places_invalid_number(client, base_test_data):
     response = client.post(
         "/purchasePlaces",
         data={"competition": "Comp A", "club": "Test Club", "places": "abc"},
@@ -110,7 +110,7 @@ def test_purchase_places_invalid_number(client, sample_data):
     assert "invalid number of places" in page
 
 
-def test_purchase_places_invalid_competition(client, sample_data):
+def test_purchase_places_invalid_competition(client, base_test_data):
     response = client.post(
         "/purchasePlaces",
         data={"competition": "UnknownCompetition", "club": "Test Club", "places": 2},
@@ -122,8 +122,8 @@ def test_purchase_places_invalid_competition(client, sample_data):
     assert "unknown competition" in page
 
 
-def test_purchase_places_exactly_remaining(client, sample_data):
-    clubs, competitions = sample_data
+def test_purchase_places_exactly_remaining(client, base_test_data):
+    clubs, competitions = base_test_data
 
     clubs[0]["points"] = 10
     competitions[0]["numberOfPlaces"] = 3
@@ -142,8 +142,8 @@ def test_purchase_places_exactly_remaining(client, sample_data):
     assert competitions[0]["numberOfPlaces"] == 0
 
 
-def test_cannot_purchase_more_than_max_places_requested(client, sample_data):
-    clubs, competitions = sample_data
+def test_purchase_more_than_max_places_requested(client, base_test_data):
+    clubs, competitions = base_test_data
 
     clubs[0]["points"] = 13
     competitions[0]["numberOfPlaces"] = 13
@@ -154,10 +154,31 @@ def test_cannot_purchase_more_than_max_places_requested(client, sample_data):
     page = response.get_data(as_text=True).lower()
 
     assert response.status_code == 200
-    assert f"you cannot book more than {MAX_PLACES_REQUESTED} places." in page
+    assert f"you cannot book more than {config.MAX_PLACES_REQUESTED} places." in page
 
     # Données NON modifiées
     assert clubs[0]["points"] == 13
     assert competitions[0]["numberOfPlaces"] == 13
+
+    assert "welcome" in page
+
+
+def test_purchase_places_for_past_competition(client, base_test_data, monkeypatch):
+    clubs, competitions = base_test_data
+
+    competitions[0]["date"] = "2000-01-01 10:00:00"
+
+    response = client.post(
+        "/purchasePlaces",
+        data={"competition": "Comp A", "club": "Test Club", "places": 4},
+    )
+
+    page = response.get_data(as_text=True).lower()
+
+    assert response.status_code == 200
+    assert "you cannot book places for a past competition."
+
+    assert clubs[0]["points"] == 13
+    assert competitions[0]["numberOfPlaces"] == 25
 
     assert "welcome" in page

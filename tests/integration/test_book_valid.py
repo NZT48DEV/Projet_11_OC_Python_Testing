@@ -1,4 +1,4 @@
-def test_book_valid(client, sample_data):
+def test_book_valid(client, base_test_data):
     # Accès à la page booking
     response = client.get("/book/Comp A/Test Club")
 
@@ -10,7 +10,7 @@ def test_book_valid(client, sample_data):
     assert "test club" in page
 
 
-def test_book_invalid_club(client, sample_data):
+def test_book_invalid_club(client, base_test_data):
     response = client.get("/book/Comp A/ClubInexistant")
     page = response.get_data(as_text=True).lower()
 
@@ -18,7 +18,7 @@ def test_book_invalid_club(client, sample_data):
     assert "unknown club or competition" in page
 
 
-def test_book_invalid_competition(client, sample_data):
+def test_book_invalid_competition(client, base_test_data):
     response = client.get("/book/UnknownCompetition/Test Club")
     page = response.get_data(as_text=True).lower()
 

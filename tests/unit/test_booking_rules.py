@@ -1,3 +1,6 @@
+from datetime import datetime
+
+import gudlft_reservation.config as config
 from gudlft_reservation.config import MAX_PLACES_REQUESTED
 from gudlft_reservation.server import can_book
 
@@ -10,7 +13,7 @@ VALID_CLUB = {
 
 VALID_COMPETITION = {
     "name": "Comp A",
-    "date": "2025-12-31 10:00:00",
+    "date": "2026-12-31 10:00:00",
     "numberOfPlaces": "13",
 }
 
@@ -77,7 +80,11 @@ def test_can_book_invalid_points_valueerror():
 
 # ---------- Tests : règles métier ----------
 def test_can_book_competition_not_enough_places():
-    competition = {"name": "Comp B", "date": "2025-12-31", "numberOfPlaces": "3"}
+    competition = {
+        "name": "Comp B",
+        "date": "2025-12-31 10:00:00",
+        "numberOfPlaces": "3",
+    }
     allowed, msg = can_book(VALID_CLUB, competition, 5)
 
     assert allowed is False
@@ -102,3 +109,12 @@ def test_can_book_refuses_more_than_max_places_requested():
 
     assert allowed is False
     assert msg == f"You cannot book more than {MAX_PLACES_REQUESTED} places."
+
+
+def test_cannot_book_past_competition(monkeypatch):
+    # On simule que la date actuelle est APRES la competition
+    monkeypatch.setattr(config, "CURRENT_DATETIME", datetime(2030, 1, 1))
+
+    allowed, msg = can_book(VALID_CLUB, VALID_COMPETITION, 12)
+    assert allowed is False
+    assert msg == "You cannot book places for a past competition."

@@ -1,9 +1,10 @@
 import json
 import os
+from datetime import datetime
 
 from flask import Flask, flash, redirect, render_template, request, url_for
 
-from gudlft_reservation.config import MAX_PLACES_REQUESTED
+import gudlft_reservation.config as config
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -40,12 +41,19 @@ def can_book(club: dict, competition: dict, places_requested: int):
         requested = int(places_requested)
         available_points = int(club.get("points", 0))
         competition_places = int(competition.get("numberOfPlaces", 0))
+        competition_date = datetime.strptime(competition["date"], config.DATE_FORMAT)
+
+        if competition_date < config.CURRENT_DATETIME:
+            return False, "You cannot book places for a past competition."
 
         if requested <= 0:
             return False, "You must book at least one place."
 
-        if requested > MAX_PLACES_REQUESTED:
-            return False, f"You cannot book more than {MAX_PLACES_REQUESTED} places."
+        if requested > config.MAX_PLACES_REQUESTED:
+            return (
+                False,
+                f"You cannot book more than {config.MAX_PLACES_REQUESTED} places.",
+            )
 
         if requested > available_points:
             return (
