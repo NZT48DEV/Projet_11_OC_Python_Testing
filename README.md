@@ -30,7 +30,7 @@ en place pour la suite.
 
 ------------------------------------------------------------------------
 
-# Issue 1 --- Crash sur email invalide (corrigé)
+# Issue 1 — Crash sur email invalide (corrigé)
 
 ### ❗ Problème
 
@@ -47,7 +47,7 @@ email inconnu.
 
 ------------------------------------------------------------------------
 
-# Issue 2 --- Empêcher la réservation si le club n'a pas assez de points (corrigé)
+# Issue 2 — Empêcher la réservation si le club n'a pas assez de points (corrigé)
 
 ### ❗ Problème
 
@@ -65,7 +65,7 @@ Tests maintenant **100 % green**.
 
 ------------------------------------------------------------------------
 
-# Issue 3 --- Clubs should not be able to book more than the competition places available (corrigé)
+# Issue 3 — Clubs should not be able to book more than the competition places available (corrigé)
 
 ### ❗ Problème
 
@@ -102,7 +102,7 @@ dépasser les places restantes.
 
 ------------------------------------------------------------------------
 
-# Issue 4 --- Limit booking to a maximum of 12 places (corrigé)
+# Issue 4 — Limit booking to a maximum of 12 places (corrigé)
 
 ### ❗ Problème
 
@@ -133,7 +133,7 @@ totalement respectée.
 
 ------------------------------------------------------------------------
 
-# Issue 5 --- BUG: Booking places in past competitions (corrigé)
+# Issue 5 — BUG: Booking places in past competitions (corrigé)
 
 ### ❗ Problème
 
