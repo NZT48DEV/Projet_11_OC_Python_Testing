@@ -213,22 +213,23 @@ README.md
 ```
 tests/
 ├── unit
+│    ├── test_booking_rules.py
 │    ├── test_club_lookup.py
 │    ├── test_competitions_lookup.py
 │    └── test_loading_functions.py
 │
 ├── integration
-│    ├── test_show_summary_invalid_email.py
-│    ├── test_show_summary_invalid_club.py
-│    ├── test_purchase_places_valid.py
+│    ├── test_show_summary_email.py
+│    ├── test_show_summary_club.py
+│    ├── test_purchase_places.py
 │    ├── test_book_valid.py
+│    ├── test_index_page_loads.py
 │    └── test_logout_redirects.py
 │
 ├── functional
-│    ├── test_login_valid_email.py
-│    ├── test_login_invalid_email.py
-│    ├── test_booking_page.py
-│    └── test_full_booking_flow.py
+│    ├── helpers.py
+│    ├── test_booking.py
+│    └── test_login_email.py
 │
 ├── performance
 │    ├── locustfile.py
