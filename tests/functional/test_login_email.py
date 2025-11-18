@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 
-def test_login_invalid_email(browser, wait_for_text_in_page):
+def test_login_invalid_email(browser, wait_for_text):
     # Accès page d'accueil
     browser.get("http://127.0.0.1:5000/")
 
@@ -10,7 +10,7 @@ def test_login_invalid_email(browser, wait_for_text_in_page):
     browser.find_element(By.TAG_NAME, "button").click()
 
     # Attente du message d’erreur
-    wait_for_text_in_page(browser, "unknown email")
+    wait_for_text(browser, "unknown email")
 
     page = browser.page_source.lower()
 
@@ -19,7 +19,7 @@ def test_login_invalid_email(browser, wait_for_text_in_page):
     assert "please try again" in page
 
 
-def test_login_valid_email(browser, wait_for_text_in_page):
+def test_login_valid_email(browser, wait_for_text):
     # Accès page d'accueil
     browser.get("http://127.0.0.1:5000/")
 
@@ -28,7 +28,7 @@ def test_login_valid_email(browser, wait_for_text_in_page):
     browser.find_element(By.TAG_NAME, "button").click()
 
     # Attente de la page welcome
-    wait_for_text_in_page(browser, "welcome, john@simplylift.co")
+    wait_for_text(browser, "welcome, john@simplylift.co")
 
     page = browser.page_source.lower()
 

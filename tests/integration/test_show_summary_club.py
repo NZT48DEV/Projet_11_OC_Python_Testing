@@ -9,8 +9,8 @@ def test_show_summary_invalid_club(client):
     assert "please enter your secretary email" in text  # contenu de index.html
 
 
-def test_show_summary_valid_club(client, sample_data):
-    clubs, competitions = sample_data  # conftest.py
+def test_show_summary_valid_club(client, base_test_data):
+    clubs, competitions = base_test_data  # conftest.py
 
     # --- Requête GET avec un club valide ---
     response = client.get("/showSummary?club=Test Club")

@@ -18,8 +18,8 @@ def test_show_summary_invalid_email(client):
     assert '<button type="submit">' in page
 
 
-def test_show_summary_valid_email(client, sample_data):
-    clubs, competitions = sample_data  # conftest.py
+def test_show_summary_valid_email(client, base_test_data):
+    clubs, competitions = base_test_data  # conftest.py
 
     # On fixe l'email du premier club pour correspondre au test
     clubs[0]["email"] = "john@simplylift.co"
