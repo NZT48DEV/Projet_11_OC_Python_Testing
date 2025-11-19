@@ -32,8 +32,13 @@ def base_test_data(monkeypatch):
         {"name": "Fall Classic", "date": "2030-12-31 10:00:00", "numberOfPlaces": 12},
     ]
 
+    # Patch des données globales en mémoire
     monkeypatch.setattr(app_server, "clubs", test_clubs)
     monkeypatch.setattr(app_server, "competitions", test_competitions)
+
+    # 🔥 Patch des fonctions loadClubs / loadCompetitions
+    monkeypatch.setattr(app_server, "loadClubs", lambda: test_clubs)
+    monkeypatch.setattr(app_server, "loadCompetitions", lambda: test_competitions)
 
     return test_clubs, test_competitions
 

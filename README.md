@@ -28,26 +28,24 @@ projet consiste à :
 Ce README décrit les issues corrigées, ainsi que l'infrastructure mise
 en place pour la suite.
 
-------------------------------------------------------------------------
-
-# 📄 Issues
-
-Voir les détails complets des issues : [ISSUES_DETAILS.md](ISSUES_DETAILS.md)
-
 ---
 
 # 🏗 Architecture du projet
 
 ```
 gudlft_reservation/
-│── server.py
 │── clubs.json
 │── competitions.json
+│── config.py
+│── server.py
 │── templates/
+│     ├── booking.html
 │     ├── index.html
-│     ├── welcome.html
-│     └── booking.html
-│
+│     ├── points_board.html
+│     └── welcome.html
+│── static/
+│     └── style/
+│           └── points_board.css 
 tests/
 │── unit/
 │── integration/
@@ -55,9 +53,18 @@ tests/
 │── performance/
 │── conftest.py
 │
+.flake8
+.gitignore
+.pre-commit-config.yaml
 Pipfile
 Pipfile.lock
 README.md
+pytest.ini
+pyproject.toml
+README.md
+ISSUE_DETAILS.md
+PERFORMANCE_DETAILS.md
+run_performance_tests.bat
 ```
 
 ### 🔎 Architecture des tests
@@ -65,27 +72,30 @@ README.md
 ```
 tests/
 ├── unit
-│    ├── test_booking_rules.py
-│    ├── test_club_lookup.py
-│    ├── test_competitions_lookup.py
-│    └── test_loading_functions.py
+│    ├── test_unit_booking_rules.py
+│    ├── test_unit_club_lookup.py
+│    ├── test_unit_competitions_lookup.py
+│    ├── test_unit_board.py
+│    └── test_unit_loading_functions.py
 │
 ├── integration
-│    ├── test_show_summary_email.py
-│    ├── test_show_summary_club.py
-│    ├── test_purchase_places.py
-│    ├── test_book_valid.py
-│    ├── test_index_page_loads.py
-│    └── test_logout_redirects.py
+│    ├── test_integration_show_summary_email.py
+│    ├── test_integration_show_summary_club.py
+│    ├── test_integration_purchase_places.py
+│    ├── test_integration_book_valid.py
+│    ├── test_integration_index_page_loads.py
+│    ├── test_integration_board.py
+│    └── test_integration_logout_redirects.py
 │
 ├── functional
 │    ├── helpers.py
-│    ├── test_booking.py
-│    └── test_login_email.py
+│    ├── test_functional_booking.py
+│    ├── test_functional_board.py
+│    └── test_functional_login_email.py
 │
 ├── performance
 │    ├── locustfile.py
-│    └── run_performance.py
+│    └── run_performance_tests.py
 ```
 
 ---
@@ -137,13 +147,19 @@ pytest
 pytest tests/functional -s
 ```
 
-### Tests de performance :
+### Tests de performance (à exécuter depuis CMD / PowerShell uniquement)
+
+⚠️ **Important :**  
+Les tests de performance Locust **ne doivent pas être lancés depuis Git Bash (MINGW64)** car cela casse les chemins Windows et perturbe `subprocess` ainsi que WebDriver.
+
+➡️ **Utilisez impérativement :**
+- **CMD.exe**  
+ou
+- **PowerShell**
 
 ```bash
-python tests/performance/run_performance.py
+python tests/performance/run_performance_tests.py
 ```
-
----
 
 # 📊 Couverture du code
 
@@ -153,8 +169,6 @@ pytest --cov=gudlft_reservation --cov-report=html
 
 Couverture actuelle : **100 %**  
 (`app.run()` volontairement exclu)
-
----
 
 ------------------------------------------------------------------------
 
@@ -185,7 +199,6 @@ Couverture actuelle : **100 %**
 -   Scénarios simulant de nombreuses connexions
 -   Serveur isolé lancé automatiquement
 
-
 ------------------------------------------------------------------------
 
 # 🚀 Pour la suite : état d'avancement des issues
@@ -201,12 +214,23 @@ Couverture actuelle : **100 %**
     places per competition**
 -   ✔ **Issue 5 — BUG: Booking places in past competitions**
 -   ✔ **Issue 6 — BUG: Point updates are not reflected**
+-   ✔ **Issue 7 — FEATURE: Implement Points Display Board**
 
 ## ⏳ Issues restantes à traiter
 
--   [ ] **Issue 7 — FEATURE: Implement Points Display Board**
+-   Aucunes
 
 ------------------------------------------------------------------------
+
+# 📄 Issues
+
+Voir les détails complets des issues : [ISSUES_DETAILS.md](ISSUES_DETAILS.md)
+
+------------------------------------------------------------------------
+
+# ⚡ Performances
+
+Voir les détails du rapport des tests de performances : [PERFORMANCE_DETAILS.md](PERFORMANCE_DETAILS.md)
 
 # 🎯 Conclusion
 

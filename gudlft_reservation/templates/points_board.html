@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Points Display Board</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style/points_board.css') }}">
+</head>
+<body>
+
+<h2>Points Display Board</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Club Name</th>
+            <th>Available Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for club in clubs %}
+        <tr>
+            <td>{{ club.name }}</td>
+            <td>{{ club.points }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+</body>
+</html>
