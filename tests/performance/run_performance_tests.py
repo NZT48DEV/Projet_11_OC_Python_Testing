@@ -1,5 +1,5 @@
+import os
 import subprocess
-import sys
 import time
 
 import requests
@@ -12,7 +12,7 @@ def wait_for_server(url, timeout=10):
             r = requests.get(url)
             if r.status_code == 200:
                 return True
-        except Exception:
+        except requests.RequestException:
             pass
         time.sleep(0.1)
     return False
@@ -21,32 +21,54 @@ def wait_for_server(url, timeout=10):
 def main():
     print("Démarrage du serveur Flask pour les tests Locust...")
 
-    # Lancement du serveur Flask dans un process
+    # -----------------------------
+    # VARIABLES D’ENVIRONNEMENT
+    # -----------------------------
+    LOCUST_USERS = "6"
+    LOCUST_SPAWN_RATE = "1"
+
+    # Injecte les variables dans l’environnement
+    env = {
+        **os.environ,
+        "LOCUST_USERS": LOCUST_USERS,
+        "LOCUST_SPAWN_RATE": LOCUST_SPAWN_RATE,
+    }
+
+    # -----------------------------
+    # Lancer Flask via pipenv
+    # -----------------------------
     flask_proc = subprocess.Popen(
-        [sys.executable, "-m", "gudlft_reservation.server"],
+        ["pipenv", "run", "flask", "run"],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
+        shell=True,
+        env=env,
     )
 
-    # Attendre qu’il soit en ligne
+    # Attendre que Flask soit UP
     if not wait_for_server("http://127.0.0.1:5000"):
         print("ERREUR : Le serveur Flask ne démarre pas.")
         flask_proc.terminate()
         return
 
-    print("Serveur Flask lancé sur http://127.0.0.1:5000")
+    print("Serveur Flask lancé → http://127.0.0.1:5000")
 
-    # Lancer locust avec le bon dossier
-    print("Lancement de Locust...")
+    print("Lancement de Locust...\n")
+
     try:
-        subprocess.run(["locust", "-f", "tests/performance/locustfile.py"], check=True)
+        subprocess.run(
+            ["pipenv", "run", "locust", "-f", "tests/performance/locustfile.py"],
+            check=True,
+            env=env,
+        )
+        input("Appuyez sur Entrée pour arrêter Locust...")
     except KeyboardInterrupt:
         print("\nLocust arrêté manuellement.")
 
     print("Arrêt du serveur Flask...")
     flask_proc.terminate()
     flask_proc.wait()
-    print("Serveur arrêté proprement.")
+    print("Serveur arrêté correctement.")
 
 
 if __name__ == "__main__":

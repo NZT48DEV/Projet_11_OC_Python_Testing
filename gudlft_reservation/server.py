@@ -173,6 +173,12 @@ def purchasePlaces():
     return render_template("welcome.html", club=club, competitions=competitions)
 
 
+@app.route("/pointsBoard")
+def points_board():
+    clubs = loadClubs()
+    return render_template("points_board.html", clubs=clubs)
+
+
 @app.route("/logout")
 def logout():
     return redirect(url_for("index"))
