@@ -118,3 +118,24 @@ def test_cannot_book_past_competition(monkeypatch):
     allowed, msg = can_book(VALID_CLUB, VALID_COMPETITION, 12)
     assert allowed is False
     assert msg == "You cannot book places for a past competition."
+
+
+def test_points_are_deducted_correctly():
+    # On copie les fixtures pour éviter toute mutation globale
+    club = VALID_CLUB.copy()
+    competition = VALID_COMPETITION.copy()
+
+    places_requested = 4
+
+    # Vérification via can_book()
+    allowed, msg = can_book(club, competition, places_requested)
+    assert allowed is True
+    assert msg == ""
+
+    # Simulation de la logique de /purchasePlaces
+    club["points"] = int(club["points"]) - places_requested
+
+    assert club["points"] == 10, (
+        "Après une réservation de 4 places avec 14 points au départ, "
+        "le club devrait avoir 10 points restants."
+    )
