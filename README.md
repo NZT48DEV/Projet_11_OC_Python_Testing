@@ -147,13 +147,19 @@ pytest
 pytest tests/functional -s
 ```
 
-### Tests de performance :
+### Tests de performance (à exécuter depuis CMD / PowerShell uniquement)
+
+⚠️ **Important :**  
+Les tests de performance Locust **ne doivent pas être lancés depuis Git Bash (MINGW64)** car cela casse les chemins Windows et perturbe `subprocess` ainsi que WebDriver.
+
+➡️ **Utilisez impérativement :**
+- **CMD.exe**  
+ou
+- **PowerShell**
 
 ```bash
-python tests/performance/run_performance.py
+python tests/performance/run_performance_tests.py
 ```
-
----
 
 # 📊 Couverture du code
 
