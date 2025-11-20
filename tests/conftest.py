@@ -8,39 +8,36 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from werkzeug.serving import make_server
 
-import gudlft_reservation.server as app_server
-from gudlft_reservation.server import app
-
+import gudlft_reservation.views.booking as booking_views
+import gudlft_reservation.views.main as main_views
+from gudlft_reservation.app import app
 
 # ---------------------------------------------------------
-#  FIXTURE GLOBALE POUR TOUTES LES DONNÉES
+#  FIXTURE GLOBALE POUR LES DONNÉES DE TEST
 # ---------------------------------------------------------
-@pytest.fixture(autouse=True)
+
+
+@pytest.fixture
 def base_test_data(monkeypatch):
+
     test_clubs = [
         {"name": "Test Club", "email": "test@mail.com", "points": 13},
         {"name": "Simply Lift", "email": "john@simplylift.co", "points": 13},
     ]
 
-    test_competitions = [
+    test_comps = [
         {"name": "Comp A", "date": "2030-12-31 10:00:00", "numberOfPlaces": 25},
-        {
-            "name": "Spring Festival",
-            "date": "2030-12-31 10:00:00",
-            "numberOfPlaces": 25,
-        },
-        {"name": "Fall Classic", "date": "2030-12-31 10:00:00", "numberOfPlaces": 12},
+        {"name": "Comp B", "date": "2030-12-31 10:00:00", "numberOfPlaces": 10},
     ]
 
-    # Patch des données globales en mémoire
-    monkeypatch.setattr(app_server, "clubs", test_clubs)
-    monkeypatch.setattr(app_server, "competitions", test_competitions)
+    # Patch des getters used by all views
+    monkeypatch.setattr(main_views, "get_clubs", lambda: test_clubs)
+    monkeypatch.setattr(main_views, "get_competitions", lambda: test_comps)
 
-    # 🔥 Patch des fonctions loadClubs / loadCompetitions
-    monkeypatch.setattr(app_server, "loadClubs", lambda: test_clubs)
-    monkeypatch.setattr(app_server, "loadCompetitions", lambda: test_competitions)
+    monkeypatch.setattr(booking_views, "get_clubs", lambda: test_clubs)
+    monkeypatch.setattr(booking_views, "get_competitions", lambda: test_comps)
 
-    return test_clubs, test_competitions
+    return test_clubs, test_comps
 
 
 # ---------------------------------------------------------
@@ -73,6 +70,7 @@ def live_server(base_test_data):
     thread.daemon = True
     thread.start()
     time.sleep(0.2)
+
     try:
         yield
     finally:

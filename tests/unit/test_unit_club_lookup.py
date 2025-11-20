@@ -1,4 +1,4 @@
-from gudlft_reservation.server import loadClubs
+from gudlft_reservation.models.data_loader import load_clubs
 
 # --------- Helpers ---------
 
@@ -15,13 +15,13 @@ def get_club_by_name(clubs, name):
 
 
 def test_load_clubs_returns_list():
-    clubs = loadClubs()
+    clubs = load_clubs()
     assert isinstance(clubs, list)
     assert len(clubs) > 0
 
 
 def test_club_has_expected_fields():
-    club = loadClubs()[0]
+    club = load_clubs()[0]
     assert "email" in club
     assert "name" in club
     assert "points" in club
@@ -31,14 +31,14 @@ def test_club_has_expected_fields():
 
 
 def test_get_club_by_email_found():
-    clubs = loadClubs()
+    clubs = load_clubs()
     result = get_club_by_email(clubs, "john@simplylift.co")
     assert result is not None
     assert result["email"] == "john@simplylift.co"
 
 
 def test_get_club_by_email_not_found():
-    clubs = loadClubs()
+    clubs = load_clubs()
     result = get_club_by_email(clubs, "unknown@email.com")
     assert result is None
 
@@ -47,13 +47,13 @@ def test_get_club_by_email_not_found():
 
 
 def test_get_club_by_name_found():
-    clubs = loadClubs()
+    clubs = load_clubs()
     result = get_club_by_name(clubs, "Simply Lift")
     assert result is not None
     assert result["name"] == "Simply Lift"
 
 
 def test_get_club_by_name_not_found():
-    clubs = loadClubs()
+    clubs = load_clubs()
     result = get_club_by_name(clubs, "Unknown Club")
     assert result is None

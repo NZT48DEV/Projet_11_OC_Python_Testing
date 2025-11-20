@@ -1,21 +1,21 @@
-import gudlft_reservation.server as server
+import gudlft_reservation.views.main as main_views
+from gudlft_reservation.app import app
+from gudlft_reservation.views.main import points_board
 
 
 def test_points_board_unit(monkeypatch):
-    fake_clubs = [{"name": "Unit Club", "email": "unit@club.com", "points": 10}]
+    test_clubs = [{"name": "Unit Club", "email": "unit@mail.com", "points": 10}]
 
-    # Mock loadClubs()
-    monkeypatch.setattr(server, "loadClubs", lambda: fake_clubs)
+    monkeypatch.setattr(main_views, "load_clubs", lambda: test_clubs)
 
-    # Mock render_template()
-    def fake_render(template, clubs):
+    def fake_render(template, **kwargs):
         assert template == "points_board.html"
-        assert clubs == fake_clubs
+        assert kwargs["clubs"] == test_clubs
         return "HTML_OK"
 
-    monkeypatch.setattr(server, "render_template", fake_render)
+    monkeypatch.setattr(main_views, "render_template", fake_render)
 
-    # Appel de la fonction
-    result = server.points_board()
+    with app.test_request_context():
+        result = points_board()
 
     assert result == "HTML_OK"

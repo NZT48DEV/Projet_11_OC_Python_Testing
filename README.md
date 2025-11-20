@@ -34,36 +34,42 @@ en place pour la suite.
 
 ```
 gudlft_reservation/
-│── clubs.json
-│── competitions.json
-│── config.py
-│── server.py
-│── templates/
-│     ├── booking.html
-│     ├── index.html
-│     ├── points_board.html
-│     └── welcome.html
-│── static/
-│     └── style/
-│           └── points_board.css 
-tests/
-│── unit/
-│── integration/
-│── functional/
-│── performance/
-│── conftest.py
-│
+    │── models/
+    │     └── data_loader.py
+    │── services/
+    │     └── booking_rules.py
+    │── static/
+    │     └── style/
+    │           └── points_board.css 
+    │── templates/
+    │     ├── booking.html
+    │     ├── index.html
+    │     ├── points_board.html
+    │     └── welcome.html
+    │── views/
+    │     ├── booking.py
+    │     └── main.py
+    │── app.py
+    │── clubs.json
+    │── competitions.json
+    │── config.py
+    │── server.py
+   tests/
+    │── conftest.py
+    │── functional/
+    │── integration/
+    │── performance/
+    └── unit/
 .flake8
 .gitignore
 .pre-commit-config.yaml
-Pipfile
-Pipfile.lock
-README.md
-pytest.ini
-pyproject.toml
-README.md
 ISSUE_DETAILS.md
 PERFORMANCE_DETAILS.md
+Pipfile
+Pipfile.lock
+pyproject.toml
+pytest.ini
+README.md
 run_performance_tests.bat
 ```
 
@@ -73,6 +79,7 @@ run_performance_tests.bat
 tests/
 ├── unit
 │    ├── test_unit_booking_rules.py
+│    ├── test_unit_booking_getters.py
 │    ├── test_unit_club_lookup.py
 │    ├── test_unit_competitions_lookup.py
 │    ├── test_unit_board.py
