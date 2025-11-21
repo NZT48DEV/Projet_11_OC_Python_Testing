@@ -115,6 +115,8 @@ Avant de démarrer l'application Flask, crée un fichier **`.env`** à la racine
 ```
 FLASK_APP=gudlft_reservation.app
 FLASK_ENV=development
+LOCUST_USERS=6
+LOCUST_SPAWN_RATE=1
 ```
 
 Grâce à ce fichier, Flask détecte automatiquement l’application à lancer, sans configuration manuelle supplémentaire.
