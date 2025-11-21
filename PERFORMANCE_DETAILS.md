@@ -1,71 +1,90 @@
-# Rapport de Performance — Projet Güdlft
+# 🏎️ Rapport de Performance -- Projet Gudlft
 
-## 🎯 Objectif
+## 🎯 Objectifs de performance (exigences OC)
 
-Conformément aux exigences de la phase 2 :
+Conformément aux consignes officielles du projet :
 
--   **le temps de chargement ne doit jamais dépasser 5 secondes**
--   **les mises à jour ne doivent pas dépasser 2 secondes**
--   testés via **Locust**, avec un minimum de **6 utilisateurs
-    simultanés**
+1.  **Même pour un MVP**, viser un code rapide et propre.\
+2.  **Temps de chargement maximum : 5 secondes** (routes GET).\
+3.  **Temps d'opération maximum : 2 secondes** (POST /showSummary).\
+4.  **Tests exécutés avec au moins 6 utilisateurs simulés** (Locust).
 
-------------------------------------------------------------------------
+Notre suite Locust a été améliorée pour tester désormais **toutes les
+routes critiques :**
 
-## 🧪 Méthodologie
+-   `/`\
+-   `/pointsBoard`\
+-   `/book/<competition>/<club>`\
+-   `/purchasePlaces`\
+-   `/showSummary`
 
-Les tests ont été réalisés avec **6 utilisateurs simultanés**,
-conformément à la recommandation OC d'un test léger, sur :
+## 🧪 Méthodologie de test
 
--   Endpoint public : `GET /pointsBoard`
--   Mise à jour légère : `POST /showSummary`
+-   Outil utilisé : **Locust 2.42**
+-   Nombre d'utilisateurs simulés : **6**
+-   Taux de spawn par défaut : **1 utilisateur/seconde**
+-   Test en local sur `http://127.0.0.1:5000`
+-   Scénarios réalistes : navigation + actions utilisateur
+-   Aucune temporisation → mesure du temps réel de réponse
 
-Le serveur testé est l'application Flask locale fournie.
+## 📊 Résultats détaillés
 
-------------------------------------------------------------------------
+### 1. Page d'accueil --- `GET /`
 
-## 📊 Résultats
+  Métrique   Valeur
+  ---------- ----------
+  Médiane    **2 ms**
+  95ᵉ        **4 ms**
+  Max        **4 ms**
+  Échecs     **0**
 
-### **1. Chargement des pages (GET /pointsBoard)**
+### 2. Page booking --- `GET /book/<competition>/<club>`
 
-  Metric           Valeur
-  ---------------- -----------
-  Médiane          **4 ms**
-  95e percentile   **6 ms**
-  Max              **7 ms**
-  Fails            **0**
+  Métrique   Valeur
+  ---------- ----------
+  Médiane    **3 ms**
+  95ᵉ        **6 ms**
+  Max        **6 ms**
+  Échecs     **0**
 
-➡️ **Résultat : largement en dessous du seuil de 5 secondes.**
+### 3. Tableau des points --- `GET /pointsBoard`
 
-------------------------------------------------------------------------
+  Métrique   Valeur
+  ---------- ----------
+  Médiane    **3 ms**
+  95ᵉ        **4 ms**
+  Max        **4 ms**
+  Échecs     **0**
 
-### **2. Mises à jour (POST /showSummary)**
+### 4. Achat de places --- `POST /purchasePlaces`
 
-  Metric           Valeur
-  ---------------- -----------
-  Médiane          **4 ms**
-  95e percentile   **6 ms**
-  Max              **14 ms**
-  Fails            **0**
+  Métrique   Valeur
+  ---------- ----------
+  Médiane    **3 ms**
+  95ᵉ        **7 ms**
+  Max        **7 ms**
+  Échecs     **0**
 
-➡️ **Résultat : conforme au seuil de 2 secondes.**
+### 5. Connexion --- `POST /showSummary`
 
-------------------------------------------------------------------------
+  Métrique   Valeur
+  ---------- ----------
+  Médiane    **3 ms**
+  95ᵉ        **8 ms**
+  Max        **8 ms**
+  Échecs     **0**
 
-### **3. Stabilité**
+## 📌 Synthèse globale
 
--   **0 erreurs** sur plus de **50 requêtes**
--   Temps de réponse stables
--   RPS moyen : 0
-
-➡️ Le serveur Flask tient parfaitement la charge prévue.
-
-------------------------------------------------------------------------
+  Route               Type   Médiane   Max    Limite OC   Conforme ?
+  ------------------- ------ --------- ------ ----------- ------------
+  `/`                 GET    2 ms      4 ms   \< 5s       ✔️
+  `/book/...`         GET    3 ms      6 ms   \< 5s       ✔️
+  `/pointsBoard`      GET    3 ms      4 ms   \< 5s       ✔️
+  `/purchasePlaces`   POST   3 ms      7 ms   \< 2s       ✔️
+  `/showSummary`      POST   3 ms      8 ms   \< 2s       ✔️
 
 ## 🟢 Conclusion
 
-✔️ Les temps de chargement sont inférieurs à 5 secondes
-✔️ Les mises à jour sont inférieures à 2 secondes
-✔️ Aucun échec
-✔️ Application stable et conforme aux exigences QA
-
-> *"Les performances de l'application Güdlft sont validées."*
+L'application respecte pleinement les exigences de performance et reste
+stable même sous charge simulée.
