@@ -7,7 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 # -----------------------------------------------------------
 
 
-def wait_for_text(driver, text, timeout=10):
+def wait_for_text(driver, text, timeout=3):
     """Wait until `text` appears on the page."""
     expected = text.lower()
     WebDriverWait(driver, timeout).until(lambda d: expected in d.page_source.lower())

@@ -5,7 +5,6 @@
 ![Pytest](https://img.shields.io/badge/tests-pytest-green)
 ![Coverage](https://img.shields.io/badge/Coverage-100%25-brightgreen)
 ![Locust](https://img.shields.io/badge/Performance-Locust-orange)
-![CI](https://img.shields.io/badge/CI-GitHub%20Actions-inactive)
 
 Ce dépôt contient l'application **GudLFT Reservation** ainsi que
 l'ensemble des tests permettant d'assurer une qualité applicative
@@ -34,36 +33,42 @@ en place pour la suite.
 
 ```
 gudlft_reservation/
-│── clubs.json
-│── competitions.json
-│── config.py
-│── server.py
-│── templates/
-│     ├── booking.html
-│     ├── index.html
-│     ├── points_board.html
-│     └── welcome.html
-│── static/
-│     └── style/
-│           └── points_board.css 
-tests/
-│── unit/
-│── integration/
-│── functional/
-│── performance/
-│── conftest.py
-│
+    │── models/
+    │     └── data_loader.py
+    │── services/
+    │     └── booking_rules.py
+    │── static/
+    │     └── style/
+    │           └── points_board.css 
+    │── templates/
+    │     ├── booking.html
+    │     ├── index.html
+    │     ├── points_board.html
+    │     └── welcome.html
+    │── views/
+    │     ├── booking.py
+    │     └── main.py
+    │── app.py
+    │── clubs.json
+    │── competitions.json
+    │── config.py
+    │── server.py
+   tests/
+    │── conftest.py
+    │── functional/
+    │── integration/
+    │── performance/
+    └── unit/
 .flake8
 .gitignore
 .pre-commit-config.yaml
-Pipfile
-Pipfile.lock
-README.md
-pytest.ini
-pyproject.toml
-README.md
 ISSUE_DETAILS.md
 PERFORMANCE_DETAILS.md
+Pipfile
+Pipfile.lock
+pyproject.toml
+pytest.ini
+README.md
 run_performance_tests.bat
 ```
 
@@ -73,6 +78,7 @@ run_performance_tests.bat
 tests/
 ├── unit
 │    ├── test_unit_booking_rules.py
+│    ├── test_unit_booking_getters.py
 │    ├── test_unit_club_lookup.py
 │    ├── test_unit_competitions_lookup.py
 │    ├── test_unit_board.py
@@ -104,6 +110,15 @@ tests/
 
 ## 1️⃣ Installation du projet
 
+Avant de démarrer l'application Flask, crée un fichier **`.env`** à la racine du projet contenant :
+
+```
+FLASK_APP=gudlft_reservation.app
+FLASK_ENV=development
+```
+
+Grâce à ce fichier, Flask détecte automatiquement l’application à lancer, sans configuration manuelle supplémentaire.
+
 Le projet utilise **pipenv** :
 
 ```bash
@@ -124,18 +139,20 @@ pipenv shell
 ## 3️⃣ Lancer le serveur
 
 ```bash
-pipenv run python -m gudlft_reservation.server
+flask run
 ```
 
-Serveur accessible sur :
+L’application sera accessible à l’adresse :
 
-👉 http://127.0.0.1:5000
+```
+http://127.0.0.1:5000
+```
 
 ---
 
 # 🧪 Exécuter les tests
 
-### Tous les tests :
+### Tous les tests (hors performance) :
 
 ```bash
 pytest
@@ -147,15 +164,7 @@ pytest
 pytest tests/functional -s
 ```
 
-### Tests de performance (à exécuter depuis CMD / PowerShell uniquement)
-
-⚠️ **Important :**  
-Les tests de performance Locust **ne doivent pas être lancés depuis Git Bash (MINGW64)** car cela casse les chemins Windows et perturbe `subprocess` ainsi que WebDriver.
-
-➡️ **Utilisez impérativement :**
-- **CMD.exe**  
-ou
-- **PowerShell**
+### Tests de performance 
 
 ```bash
 python tests/performance/run_performance_tests.py
@@ -224,7 +233,7 @@ Couverture actuelle : **100 %**
 
 # 📄 Issues
 
-Voir les détails complets des issues : [ISSUES_DETAILS.md](ISSUES_DETAILS.md)
+Voir les détails complets des issues : [ISSUE_DETAILS.md](ISSUE_DETAILS.md)
 
 ------------------------------------------------------------------------
 

@@ -4,7 +4,8 @@ from tests.functional.helpers import book_places, go_to_booking_page, login
 
 def test_booking_page(browser, wait_for_text):
     # Accès direct à la page : /book/<competition>/<club>
-    browser.get("http://127.0.0.1:5000/book/Spring Festival/Simply Lift")
+    # On utilise une compétition présente dans base_test_data : "Comp A"
+    browser.get("http://127.0.0.1:5000/book/Comp A/Simply Lift")
 
     # On attend que la page booking soit chargée
     wait_for_text(browser, "how many places?")
@@ -13,7 +14,7 @@ def test_booking_page(browser, wait_for_text):
 
     # Assertions robustes
     assert "booking" in page
-    assert "spring festival" in page
+    assert "comp a" in page
     assert "simply lift" in page
 
 
@@ -56,7 +57,7 @@ def test_booking_more_than_max_places_requested(browser, wait_for_text):
 
 def test_booking_insufficient_points(browser, wait_for_text, base_test_data):
     # On modifie la fixture : Simply Lift n’a plus que 5 points
-    base_test_data[0][1]["points"] = 5  # test_clubs[0]["points"] = 5
+    base_test_data[0][1]["points"] = 5  # test_clubs[1]["points"] = 5
 
     # Connexion
     login(browser, wait_for_text)
@@ -76,7 +77,7 @@ def test_booking_insufficient_points(browser, wait_for_text, base_test_data):
 
 
 def test_booking_past_competition(browser, base_test_data, wait_for_text):
-    # On modifie la fixture : Date de Spring Festival
+    # On modifie la fixture : Date de la première compétition (Comp A)
     base_test_data[1][0]["date"] = "2020-10-22 13:30:00"
 
     # Connexion

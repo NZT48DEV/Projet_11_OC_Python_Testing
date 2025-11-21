@@ -165,12 +165,53 @@ def points_board():
 -   Aucun échec Locust
 -   Script automatisé avec variables d'environnement
 
-------------------------------------------------------------------------
 
-### 🎉 Résultat final
+---
 
-La fonctionnalité est : 
-- stable
-- testée (4 niveaux)
-- performante
-- conforme à 100 % aux exigences du projet
+## Refactorisation de l’application
+
+Afin d’améliorer la maintenabilité, la testabilité et la qualité globale du projet, une refactorisation complète de l’application a été réalisée.
+
+### 🎯 Objectifs principaux
+
+- Remplacer l’ancien `server.py` par une architecture Flask moderne basée sur **l’App Factory**  
+- Introduire un point d’entrée unique `app.py` avec une fonction `create_app()`  
+- Séparer les vues dans des **Blueprints** (`main` et `booking`)  
+- Supprimer les variables globales au profit de fonctions de chargement dynamiques  
+- Centraliser le chargement des données dans `models/data_loader.py`  
+- Faciliter le **monkeypatch** dans les tests (unitaires, intégration, fonctionnels)  
+- Uniformiser le comportement entre l’exécution réelle et les différents types de tests  
+- Gérer proprement la conversion des valeurs numériques (`points`, `numberOfPlaces`) en entiers
+
+### 🔧 Modifications clés
+
+- Mise en place de `create_app()` dans `gudlft_reservation/app.py`  
+  - Enregistrement des blueprints `main` et `booking` **à l’intérieur** de `create_app()`  
+  - Suppression de toute instance globale de `app`
+
+- Refactorisation des vues :
+  - `main.py` et `booking.py` n’importent plus directement les données JSON  
+  - Utilisation de `gudlft_reservation.models.data_loader` via :
+    - `get_clubs()` → `data_loader.load_clubs()`  
+    - `get_competitions()` → `data_loader.load_competitions()`  
+  - Conversion automatique :
+    - `club["points"]` → `int`  
+    - `competition["numberOfPlaces"]` → `int`
+
+- Refonte des tests :
+  - Utilisation systématique de `create_app()` dans les tests d’intégration et unitaires  
+  - Monkeypatch des fonctions `load_clubs` / `load_competitions` directement dans `data_loader` pour tous les scénarios  
+  - Mise en place d’un serveur WSGI réel pour les tests fonctionnels (Selenium) via `make_server` + `create_app()`  
+  - Harmonisation des jeux de données de test (`base_test_data`) entre unitaires, intégration et fonctionnels
+
+- Compatibilité historique :
+  - Conservation d’un `server.py` minimal servant de **shim** de compatibilité pour l’ancien projet OC, tout en déléguant la logique à la nouvelle architecture.
+
+### ✔ Résultat
+
+L’application est désormais :
+
+- plus **stable** (données et règles centralisées)  
+- plus **modulaire** (blueprints, app factory, services dédiés)  
+- plus **testable** (monkeypatch simple, isolation serveur pour les tests fonctionnels)  
+- plus **professionnelle** et conforme aux bonnes pratiques Flask et de tests

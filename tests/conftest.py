@@ -8,47 +8,41 @@ from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from werkzeug.serving import make_server
 
-import gudlft_reservation.server as app_server
-from gudlft_reservation.server import app
+from gudlft_reservation.app import create_app
 
 
 # ---------------------------------------------------------
-#  FIXTURE GLOBALE POUR TOUTES LES DONNÉES
+#  FIXTURE GLOBALE POUR LES DONNÉES DE TEST
 # ---------------------------------------------------------
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def base_test_data(monkeypatch):
     test_clubs = [
         {"name": "Test Club", "email": "test@mail.com", "points": 13},
         {"name": "Simply Lift", "email": "john@simplylift.co", "points": 13},
     ]
 
-    test_competitions = [
+    test_comps = [
         {"name": "Comp A", "date": "2030-12-31 10:00:00", "numberOfPlaces": 25},
-        {
-            "name": "Spring Festival",
-            "date": "2030-12-31 10:00:00",
-            "numberOfPlaces": 25,
-        },
-        {"name": "Fall Classic", "date": "2030-12-31 10:00:00", "numberOfPlaces": 12},
+        {"name": "Comp B", "date": "2030-12-31 10:00:00", "numberOfPlaces": 10},
     ]
 
-    # Patch des données globales en mémoire
-    monkeypatch.setattr(app_server, "clubs", test_clubs)
-    monkeypatch.setattr(app_server, "competitions", test_competitions)
+    # Patch de la vraie source de vérité (data_loader)
+    import gudlft_reservation.models.data_loader as data_loader
 
-    # 🔥 Patch des fonctions loadClubs / loadCompetitions
-    monkeypatch.setattr(app_server, "loadClubs", lambda: test_clubs)
-    monkeypatch.setattr(app_server, "loadCompetitions", lambda: test_competitions)
+    monkeypatch.setattr(data_loader, "load_clubs", lambda: test_clubs)
+    monkeypatch.setattr(data_loader, "load_competitions", lambda: test_comps)
 
-    return test_clubs, test_competitions
+    return test_clubs, test_comps
 
 
 # ---------------------------------------------------------
-#  CLIENT FLASK
+#  CLIENT FLASK (tests intégration + unité)
 # ---------------------------------------------------------
 @pytest.fixture
 def client():
+    app = create_app()
     app.config["TESTING"] = True
+
     with app.test_client() as client:
         yield client
 
@@ -64,15 +58,18 @@ def wait_for_text():
 
 
 # ---------------------------------------------------------
-#  SERVEUR POUR TESTS FUNCTIONNELS
+#  SERVEUR WSGI POUR TESTS FUNCTIONNELS
 # ---------------------------------------------------------
 @pytest.fixture(scope="function")
 def live_server(base_test_data):
+    app = create_app()  # App FRESHEMENT créée après patch
     server = make_server("127.0.0.1", 5000, app)
+
     thread = threading.Thread(target=server.serve_forever)
     thread.daemon = True
     thread.start()
     time.sleep(0.2)
+
     try:
         yield
     finally:
@@ -81,7 +78,7 @@ def live_server(base_test_data):
 
 
 # ---------------------------------------------------------
-#  BROWSER SELENIUM
+#  SELENIUM CHROME HEADLESS
 # ---------------------------------------------------------
 @pytest.fixture
 def browser(live_server):

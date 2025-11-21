@@ -2,13 +2,14 @@ import json
 
 import pytest
 
-from gudlft_reservation.server import loadClubs, loadCompetitions
+import gudlft_reservation.models.data_loader as data_loader
+from gudlft_reservation.models.data_loader import load_clubs, load_competitions
 
 
 @pytest.fixture(
     params=[
-        (loadClubs, "clubs.json", {"email", "name", "points"}),
-        (loadCompetitions, "competitions.json", {"name", "date", "numberOfPlaces"}),
+        (load_clubs, "clubs.json", {"email", "name", "points"}),
+        (load_competitions, "competitions.json", {"name", "date", "numberOfPlaces"}),
     ]
 )
 def loader(request):
@@ -34,7 +35,8 @@ def test_loading_invalid_json(monkeypatch, tmp_path, loader):
     fake_file = tmp_path / filename
     fake_file.write_text("{ invalid json ")
 
-    monkeypatch.setattr("gudlft_reservation.server.BASE_DIR", str(tmp_path))
+    # On redirige BASE_DIR du data_loader vers un dossier temporaire
+    monkeypatch.setattr(data_loader, "BASE_DIR", str(tmp_path))
 
     with pytest.raises(json.JSONDecodeError):
         func()
@@ -43,7 +45,8 @@ def test_loading_invalid_json(monkeypatch, tmp_path, loader):
 def test_loading_missing_file(monkeypatch, tmp_path, loader):
     func, _, _ = loader
 
-    monkeypatch.setattr("gudlft_reservation.server.BASE_DIR", str(tmp_path))
+    # BASE_DIR pointe vers un dossier vide -> fichier manquant
+    monkeypatch.setattr(data_loader, "BASE_DIR", str(tmp_path))
 
     with pytest.raises(FileNotFoundError):
         func()

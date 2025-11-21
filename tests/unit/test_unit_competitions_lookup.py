@@ -1,4 +1,4 @@
-from gudlft_reservation.server import loadCompetitions
+from gudlft_reservation.models.data_loader import load_competitions
 
 # --------- Helpers ---------
 
@@ -11,13 +11,13 @@ def get_competition_by_name(comps, name):
 
 
 def test_load_competitions_returns_list():
-    comps = loadCompetitions()
+    comps = load_competitions()
     assert isinstance(comps, list)
     assert len(comps) > 0
 
 
 def test_competition_has_expected_fields():
-    comp = loadCompetitions()[0]
+    comp = load_competitions()[0]
     assert "name" in comp
     assert "date" in comp
     assert "numberOfPlaces" in comp
@@ -27,13 +27,13 @@ def test_competition_has_expected_fields():
 
 
 def test_get_competition_found():
-    comps = loadCompetitions()
+    comps = load_competitions()
     result = get_competition_by_name(comps, "Spring Festival")
     assert result is not None
     assert result["name"] == "Spring Festival"
 
 
 def test_get_competition_not_found():
-    comps = loadCompetitions()
+    comps = load_competitions()
     result = get_competition_by_name(comps, "Unknown Competition")
     assert result is None

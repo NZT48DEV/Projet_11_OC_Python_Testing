@@ -2,7 +2,7 @@ from datetime import datetime
 
 import gudlft_reservation.config as config
 from gudlft_reservation.config import MAX_PLACES_REQUESTED
-from gudlft_reservation.server import can_book
+from gudlft_reservation.services.booking_rules import can_book
 
 # ---------- Helpers ----------
 VALID_CLUB = {
