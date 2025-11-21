@@ -1,21 +1,21 @@
-# 🏎️ Rapport de Performance -- Projet Gudlft
+# 🏎️ Rapport de Performance — Projet Gudlft
 
 ## 🎯 Objectifs de performance (exigences OC)
 
 Conformément aux consignes officielles du projet :
 
-1.  **Même pour un MVP**, viser un code rapide et propre.\
-2.  **Temps de chargement maximum : 5 secondes** (routes GET).\
-3.  **Temps d'opération maximum : 2 secondes** (POST /showSummary).\
+1.  **Même pour un MVP**, viser un code rapide et propre.
+2.  **Temps de chargement maximum : 5 secondes** (routes GET).
+3.  **Temps d'opération maximum : 2 secondes** (POST /showSummary).
 4.  **Tests exécutés avec au moins 6 utilisateurs simulés** (Locust).
 
 Notre suite Locust a été améliorée pour tester désormais **toutes les
 routes critiques :**
 
--   `/`\
--   `/pointsBoard`\
--   `/book/<competition>/<club>`\
--   `/purchasePlaces`\
+-   `/`
+-   `/pointsBoard`
+-   `/book/<competition>/<club>`
+-   `/purchasePlaces`
 -   `/showSummary`
 
 ## 🧪 Méthodologie de test
@@ -29,7 +29,7 @@ routes critiques :**
 
 ## 📊 Résultats détaillés
 
-### 1. Page d'accueil --- `GET /`
+### 1. Page d'accueil — `GET /`
 
   Métrique   Valeur
   ---------- ----------
@@ -38,7 +38,7 @@ routes critiques :**
   Max        **4 ms**
   Échecs     **0**
 
-### 2. Page booking --- `GET /book/<competition>/<club>`
+### 2. Page booking — `GET /book/<competition>/<club>`
 
   Métrique   Valeur
   ---------- ----------
@@ -47,7 +47,7 @@ routes critiques :**
   Max        **6 ms**
   Échecs     **0**
 
-### 3. Tableau des points --- `GET /pointsBoard`
+### 3. Tableau des points — `GET /pointsBoard`
 
   Métrique   Valeur
   ---------- ----------
@@ -56,7 +56,7 @@ routes critiques :**
   Max        **4 ms**
   Échecs     **0**
 
-### 4. Achat de places --- `POST /purchasePlaces`
+### 4. Achat de places — `POST /purchasePlaces`
 
   Métrique   Valeur
   ---------- ----------
@@ -65,7 +65,7 @@ routes critiques :**
   Max        **7 ms**
   Échecs     **0**
 
-### 5. Connexion --- `POST /showSummary`
+### 5. Connexion — `POST /showSummary`
 
   Métrique   Valeur
   ---------- ----------
