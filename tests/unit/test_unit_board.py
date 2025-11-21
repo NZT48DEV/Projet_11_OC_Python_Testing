@@ -1,12 +1,12 @@
+import gudlft_reservation.models.data_loader as data_loader
 import gudlft_reservation.views.main as main_views
-from gudlft_reservation.app import app
-from gudlft_reservation.views.main import points_board
+from gudlft_reservation.app import create_app
 
 
 def test_points_board_unit(monkeypatch):
     test_clubs = [{"name": "Unit Club", "email": "unit@mail.com", "points": 10}]
 
-    monkeypatch.setattr(main_views, "load_clubs", lambda: test_clubs)
+    monkeypatch.setattr(data_loader, "load_clubs", lambda: test_clubs)
 
     def fake_render(template, **kwargs):
         assert template == "points_board.html"
@@ -15,7 +15,8 @@ def test_points_board_unit(monkeypatch):
 
     monkeypatch.setattr(main_views, "render_template", fake_render)
 
+    app = create_app()
     with app.test_request_context():
-        result = points_board()
+        result = main_views.points_board()
 
     assert result == "HTML_OK"

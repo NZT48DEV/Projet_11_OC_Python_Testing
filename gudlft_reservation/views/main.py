@@ -1,16 +1,16 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-from gudlft_reservation.models.data_loader import load_clubs, load_competitions
+import gudlft_reservation.models.data_loader as data_loader
 
 bp = Blueprint("main", __name__)
 
 
 def get_clubs():
-    return load_clubs()
+    return data_loader.load_clubs()
 
 
 def get_competitions():
-    return load_competitions()
+    return data_loader.load_competitions()
 
 
 @bp.route("/")

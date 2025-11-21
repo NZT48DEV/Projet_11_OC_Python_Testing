@@ -1,4 +1,4 @@
-import gudlft_reservation.views.main as main_views
+import gudlft_reservation.models.data_loader as data_loader
 
 
 def test_points_board_integration(client, monkeypatch):
@@ -7,7 +7,7 @@ def test_points_board_integration(client, monkeypatch):
         {"name": "Beta", "email": "beta@mail.com", "points": 5},
     ]
 
-    monkeypatch.setattr(main_views, "load_clubs", lambda: test_clubs)
+    monkeypatch.setattr(data_loader, "load_clubs", lambda: test_clubs)
 
     resp = client.get("/pointsBoard")
     html = resp.get_data(as_text=True)

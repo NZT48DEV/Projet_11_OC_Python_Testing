@@ -1,20 +1,20 @@
 from flask import Blueprint, flash, render_template, request
 
-from gudlft_reservation.models.data_loader import load_clubs, load_competitions
+import gudlft_reservation.models.data_loader as data_loader
 from gudlft_reservation.services.booking_rules import can_book
 
 bp = Blueprint("booking", __name__)
 
 
 def get_clubs():
-    clubs = load_clubs()
+    clubs = data_loader.load_clubs()
     for c in clubs:
         c["points"] = int(c["points"])
     return clubs
 
 
 def get_competitions():
-    comps = load_competitions()
+    comps = data_loader.load_competitions()
     for c in comps:
         c["numberOfPlaces"] = int(c["numberOfPlaces"])
     return comps
