@@ -174,3 +174,33 @@ La fonctionnalité est :
 - testée (4 niveaux)
 - performante
 - conforme à 100 % aux exigences du projet
+
+---
+
+## Refactorisation de l’application
+
+Afin d’améliorer la maintenabilité et la qualité globale du projet, une refactorisation complète a été réalisée.
+
+### 🎯 Objectifs principaux
+- Remplacer `server.py` par une architecture Flask moderne
+- Introduire un point d’entrée unique `app.py`
+- Séparer les vues dans des Blueprints (`main` et `booking`)
+- Supprimer les variables globales en faveur de getters dynamiques
+- Faciliter le monkeypatch dans les tests (unitaires, intégration, fonctionnels)
+- Uniformiser le comportement entre tests et exécution réelle
+- Convertir automatiquement les valeurs numériques provenant du JSON
+
+### 🔧 Modifications clés
+- Création des fonctions `get_clubs()` et `get_competitions()`
+- Conversion automatique des champs `points` et `numberOfPlaces` en entiers
+- Nettoyage de `booking.py` et `main.py`
+- Simplification de la logique de chargement des données
+- Mise à jour et sécurisation de tous les tests existants
+- Conservation d'un `server.py` minimal pour compatibilité avec l’ancien projet OC
+
+### ✔ Résultat
+L’application est désormais :
+- plus stable
+- plus modulaire
+- plus testable
+- plus conforme aux bonnes pratiques Flask
