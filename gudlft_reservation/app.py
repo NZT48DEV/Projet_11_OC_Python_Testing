@@ -2,6 +2,7 @@ from flask import Flask
 
 
 def create_app():
+    """Crée et configure l’application Flask avec les blueprints du projet."""
     app = Flask(__name__)
     app.secret_key = "something_special"
 

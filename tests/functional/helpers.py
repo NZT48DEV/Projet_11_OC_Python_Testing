@@ -1,3 +1,11 @@
+"""
+Helpers Selenium pour les tests fonctionnels :
+- Attentes explicites
+- Connexion utilisateur
+- Navigation dans l'interface
+- Actions sur les formulaires
+"""
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,7 +16,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 
 def wait_for_text(driver, text, timeout=3):
-    """Wait until `text` appears on the page."""
+    """Attend qu'un texte spécifique apparaisse dans la page."""
     expected = text.lower()
     WebDriverWait(driver, timeout).until(lambda d: expected in d.page_source.lower())
 
@@ -19,7 +27,7 @@ def wait_for_text(driver, text, timeout=3):
 
 
 def login(driver, wait, email="john@simplylift.co"):
-    """Login using the given email."""
+    """Effectue une connexion avec l'email fourni."""
     driver.get("http://127.0.0.1:5000/")
 
     driver.find_element(By.NAME, "email").send_keys(email)
@@ -29,7 +37,7 @@ def login(driver, wait, email="john@simplylift.co"):
 
 
 def login_expect_failure(driver, wait, email):
-    """Try to log in with a wrong email & expect error."""
+    """Tente une connexion avec un email invalide et vérifie l'erreur attendue."""
     driver.get("http://127.0.0.1:5000/")
 
     driver.find_element(By.NAME, "email").send_keys(email)
@@ -45,7 +53,7 @@ def login_expect_failure(driver, wait, email):
 
 
 def go_to_booking_page(driver, wait):
-    """Click 'Book Places' and wait for booking page."""
+    """Navigue vers la page de réservation et attend son affichage."""
     link = WebDriverWait(driver, 5).until(
         EC.element_to_be_clickable((By.LINK_TEXT, "Book Places"))
     )
@@ -60,7 +68,7 @@ def go_to_booking_page(driver, wait):
 
 
 def book_places(driver, places):
-    """Fill the booking form and submit."""
+    """Renseigne le formulaire de réservation puis le soumet."""
     field = driver.find_element(By.NAME, "places")
     field.clear()
     field.send_keys(str(places))

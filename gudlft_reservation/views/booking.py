@@ -1,20 +1,22 @@
 from flask import Blueprint, flash, render_template, request
 
-import gudlft_reservation.models.data_loader as data_loader
+import gudlft_reservation.models.data_access as data_access
 from gudlft_reservation.services.booking_rules import can_book
 
 bp = Blueprint("booking", __name__)
 
 
 def get_clubs():
-    clubs = data_loader.load_clubs()
+    """Charge les clubs et convertit les points en entiers."""
+    clubs = data_access.load_clubs()
     for c in clubs:
         c["points"] = int(c["points"])
     return clubs
 
 
 def get_competitions():
-    comps = data_loader.load_competitions()
+    """Charge les compétitions et convertit les places en entiers."""
+    comps = data_access.load_competitions()
     for c in comps:
         c["numberOfPlaces"] = int(c["numberOfPlaces"])
     return comps
@@ -22,6 +24,10 @@ def get_competitions():
 
 @bp.route("/book/<competition>/<club>")
 def book(competition, club):
+    """
+    Affiche la page de réservation pour un club et une compétition donnés.
+    Si l'un des deux est introuvable, renvoie une page d'accueil avec un message.
+    """
     clubs = get_clubs()
     competitions = get_competitions()
 
@@ -48,6 +54,12 @@ def book(competition, club):
 
 @bp.route("/purchasePlaces", methods=["POST"])
 def purchase_places():
+    """
+    Traite une demande de réservation :
+    - Vérifie club et compétition
+    - Applique les règles métier via can_book()
+    - Met à jour les données si la réservation est valide
+    """
     clubs = get_clubs()
     competitions = get_competitions()
 
@@ -81,6 +93,9 @@ def purchase_places():
     places_required = int(places_raw)
     club["points"] -= places_required
     competition["numberOfPlaces"] -= places_required
+
+    data_access.save_clubs(clubs)
+    data_access.save_competitions(competitions)
 
     flash("Great-booking complete!")
     return render_template("welcome.html", club=club, competitions=competitions)

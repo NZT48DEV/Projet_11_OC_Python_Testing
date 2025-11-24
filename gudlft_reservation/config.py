@@ -1,3 +1,10 @@
+"""
+Configuration générale de l'application :
+- Limites de réservation
+- Format des dates
+- Date actuelle utilisée pour les validations
+"""
+
 from datetime import datetime
 
 MAX_PLACES_REQUESTED = 12

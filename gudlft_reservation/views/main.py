@@ -1,25 +1,33 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
-import gudlft_reservation.models.data_loader as data_loader
+import gudlft_reservation.models.data_access as data_access
 
 bp = Blueprint("main", __name__)
 
 
 def get_clubs():
-    return data_loader.load_clubs()
+    """Charge et retourne la liste des clubs."""
+    return data_access.load_clubs()
 
 
 def get_competitions():
-    return data_loader.load_competitions()
+    """Charge et retourne la liste des compétitions."""
+    return data_access.load_competitions()
 
 
 @bp.route("/")
 def index():
+    """Affiche la page d'accueil et le formulaire de connexion."""
     return render_template("index.html")
 
 
 @bp.route("/showSummary", methods=["GET", "POST"])
 def show_summary():
+    """
+    Affiche le tableau de bord d'un club :
+    - Authentification par email (POST)
+    - Accès direct via nom du club (GET)
+    """
     clubs = get_clubs()
     competitions = get_competitions()
 
@@ -44,10 +52,12 @@ def show_summary():
 
 @bp.route("/pointsBoard")
 def points_board():
+    """Affiche le tableau récapitulatif des points de tous les clubs."""
     clubs_list = get_clubs()
     return render_template("points_board.html", clubs=clubs_list)
 
 
 @bp.route("/logout")
 def logout():
+    """Déconnecte l’utilisateur et le renvoie vers la page d’accueil."""
     return redirect(url_for("main.index"))

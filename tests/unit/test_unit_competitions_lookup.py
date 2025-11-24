@@ -1,4 +1,4 @@
-from gudlft_reservation.models.data_loader import load_competitions
+from gudlft_reservation.models.data_access import load_competitions
 
 # --------- Helpers ---------
 

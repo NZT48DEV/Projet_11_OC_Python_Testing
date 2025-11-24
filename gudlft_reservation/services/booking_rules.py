@@ -4,6 +4,10 @@ import gudlft_reservation.config as config
 
 
 def can_book(club, competition, places_requested):
+    """
+    Vérifie si un club peut réserver un nombre donné de places.
+    Retourne un tuple (bool, message) indiquant la validité et la raison en cas d'échec.
+    """
     try:
         if not isinstance(club, dict):
             return False, "Invalid club data."

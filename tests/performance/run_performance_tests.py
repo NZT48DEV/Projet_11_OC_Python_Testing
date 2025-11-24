@@ -6,7 +6,7 @@ import requests
 
 
 def wait_for_server(url, timeout=10):
-    """Attend que le serveur Flask soit UP."""
+    """Attend que le serveur Flask réponde avec un statut 200 avant de continuer."""
     for _ in range(timeout * 10):
         try:
             r = requests.get(url)
@@ -19,6 +19,7 @@ def wait_for_server(url, timeout=10):
 
 
 def main():
+    """Démarre Flask pour les tests Locust, lance Locust, puis arrête proprement le serveur."""
     print("Démarrage du serveur Flask pour les tests Locust...")
 
     # -----------------------------
