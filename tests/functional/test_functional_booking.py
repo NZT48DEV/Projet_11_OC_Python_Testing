@@ -72,3 +72,28 @@ def test_booking_past_competition(browser, base_test_data, wait_for_text):
 
     page = browser.page_source.lower()
     assert "you cannot book places for a past competition." in page
+
+
+def test_booking_exceeds_total_limit(browser, wait_for_text, base_test_data):
+    """
+    Vérifie qu'un club ne peut pas dépasser la limite totale de places réservées
+    pour une même compétition, même via l'interface utilisateur.
+    """
+    clubs, competitions = base_test_data
+
+    clubs[1]["points"] = 50
+    competitions[0]["numberOfPlaces"] = 30
+
+    competitions[0]["bookings"] = {"Simply Lift": 12}
+
+    login(browser, wait_for_text)
+    go_to_booking_page(browser, wait_for_text)
+    book_places(browser, 1)
+
+    wait_for_text(browser, "already booked 12 places")
+
+    page = browser.page_source.lower()
+
+    assert "already booked 12 places" in page
+    assert str(config.MAX_PLACES_REQUESTED) in page
+    assert "welcome, simply lift" in page or "welcome, john@simplylift.co" in page

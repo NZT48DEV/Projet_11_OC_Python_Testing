@@ -224,3 +224,28 @@ def test_purchase_places_for_past_competition(client, base_test_data, monkeypatc
     assert clubs[0]["points"] == 13
     assert competitions[0]["numberOfPlaces"] == 25
     assert "welcome" in page
+
+
+def test_purchase_places_exceeds_total_limit(client, base_test_data, monkeypatch):
+    """Vérifie qu'un club ne peut pas dépasser la limite totale de places réservées pour une compétition."""
+    clubs, competitions = base_test_data
+
+    clubs[0]["points"] = 50
+    competitions[0]["numberOfPlaces"] = 30
+
+    competitions[0]["bookings"] = {"Test Club": 12}
+
+    response = client.post(
+        "/purchasePlaces",
+        data={"competition": "Comp A", "club": "Test Club", "places": 1},
+    )
+
+    page = response.get_data(as_text=True).lower()
+
+    assert response.status_code == 200
+    assert "already booked 12 places" in page
+    assert str(config.MAX_PLACES_REQUESTED) in page
+
+    assert clubs[0]["points"] == 50
+    assert competitions[0]["numberOfPlaces"] == 30
+    assert competitions[0]["bookings"]["Test Club"] == 12
