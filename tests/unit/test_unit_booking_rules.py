@@ -139,3 +139,19 @@ def test_points_are_deducted_correctly():
         "Après une réservation de 4 places avec 14 points au départ, "
         "le club devrait avoir 10 points restants."
     )
+
+
+def test_can_book_refuses_when_total_places_exceeds_limit():
+    """
+    Vérifie qu'un club ne peut pas dépasser la limite totale de places
+    réservées pour une même compétition (MAX_PLACES_REQUESTED).
+    """
+    competition = VALID_COMPETITION.copy()
+    competition["numberOfPlaces"] = "20"
+    competition["bookings"] = {"Test Club": 12}
+
+    allowed, msg = can_book(VALID_CLUB, competition, 1)
+
+    assert allowed is False
+    assert "already booked 12 places" in msg
+    assert str(MAX_PLACES_REQUESTED) in msg

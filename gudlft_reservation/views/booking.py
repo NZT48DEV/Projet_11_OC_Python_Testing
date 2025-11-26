@@ -15,10 +15,11 @@ def get_clubs():
 
 
 def get_competitions():
-    """Charge les compétitions et convertit les places en entiers."""
     comps = data_access.load_competitions()
     for c in comps:
         c["numberOfPlaces"] = int(c["numberOfPlaces"])
+        if "bookings" not in c:
+            c["bookings"] = {}  # Nouveau : suivi des réservations par club
     return comps
 
 
@@ -91,6 +92,12 @@ def purchase_places():
         )
 
     places_required = int(places_raw)
+
+    competition.setdefault("bookings", {})
+    competition["bookings"][club_name] = (
+        competition["bookings"].get(club_name, 0) + places_required
+    )
+
     club["points"] -= places_required
     competition["numberOfPlaces"] -= places_required
 

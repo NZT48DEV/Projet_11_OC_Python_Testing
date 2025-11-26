@@ -4,10 +4,6 @@ import gudlft_reservation.config as config
 
 
 def can_book(club, competition, places_requested):
-    """
-    Vérifie si un club peut réserver un nombre donné de places.
-    Retourne un tuple (bool, message) indiquant la validité et la raison en cas d'échec.
-    """
     try:
         if not isinstance(club, dict):
             return False, "Invalid club data."
@@ -30,6 +26,17 @@ def can_book(club, competition, places_requested):
             return (
                 False,
                 f"You cannot book more than {config.MAX_PLACES_REQUESTED} places.",
+            )
+
+        already_booked = competition.get("bookings", {}).get(club["name"], 0)
+
+        if already_booked + requested > config.MAX_PLACES_REQUESTED:
+            return (
+                False,
+                (
+                    f"You already booked {already_booked} places for this competition. "
+                    f"Maximum allowed is {config.MAX_PLACES_REQUESTED}."
+                ),
             )
 
         if requested > available_points:
